@@ -2,13 +2,23 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>名古屋 高山 北陸遊</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>名古屋・北陸 12日遊</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
     <style>
+        /* --- 全域設定 --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0; padding: 0;
+        }
+
         :root {
             --primary: #2F3E46;
             --accent: #A63744;
@@ -21,7 +31,8 @@
 
         body {
             font-family: 'Shippori Mincho', 'Noto Serif TC', serif;
-            margin: 0; padding: 0; color: var(--text-main); padding-bottom: 90px;
+            color: var(--text-main); 
+            padding-bottom: 100px;
             /* 背景圖 */
             background-image: url('IMG_2278.jpeg');
             background-size: cover; background-position: center; background-attachment: fixed;
@@ -34,16 +45,14 @@
             padding: 25px 20px 15px 20px;
             display: flex; justify-content: space-between; align-items: flex-end;
             background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
-            /* 修改：取消 sticky，改為 relative，這樣就會跟著滑動了 */
-            position: relative; 
-            z-index: 1000;
+            position: relative; z-index: 1000;
+            width: 100%;
         }
-        /* 修改標題文字大小與陰影 */
-        .header-title h1 { margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; }
+        .header-title h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; }
         .settings-btn { font-size: 1.2rem; color: var(--primary); cursor: pointer; padding: 5px; }
 
         /* Date Scroller */
-        .date-scroller { display: flex; overflow-x: auto; padding: 10px 20px; gap: 12px; scrollbar-width: none; justify-content: center; }
+        .date-scroller { display: flex; overflow-x: auto; padding: 10px 20px; gap: 12px; scrollbar-width: none; justify-content: center; width: 100%; }
         .date-scroller::-webkit-scrollbar { display: none; }
         .date-card {
             flex: 0 0 auto; width: 55px; height: 75px;
@@ -56,15 +65,15 @@
         .d-day { font-size: 0.6rem; font-family: sans-serif; }
         .d-date { font-size: 1.2rem; font-weight: 600; }
 
-        .container { padding: 10px 20px; }
-        .view-section { display: none; animation: fadeIn 0.4s ease-out; }
+        .container { padding: 10px 20px; width: 100%; max-width: 600px; margin: 0 auto; }
+        .view-section { display: none; animation: fadeIn 0.4s ease-out; width: 100%; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card-base {
             background: var(--glass-bg); backdrop-filter: blur(12px);
             border: var(--glass-border); border-radius: 12px; padding: 20px; margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow); width: 100%;
         }
 
         /* Weather */
@@ -78,21 +87,58 @@
         .f-icon { font-size: 1.2rem; margin-bottom: 5px; display: block; }
         .f-temp { font-size: 0.8rem; font-weight: bold; color: var(--primary); font-family: sans-serif; }
 
-        /* Itinerary */
-        .section-title { text-align: center; margin: 25px 0 15px; font-size: 1rem; letter-spacing: 3px; color: var(--primary); border-bottom: 1px solid rgba(0,0,0,0.1); line-height: 0.1em; }
-        .timeline-item { display: flex; gap: 15px; margin-bottom: 20px; position: relative; touch-action: none; }
-        .t-handle { cursor: move; display: flex; align-items: center; color: #fff; padding-right: 5px; opacity: 0.7;} 
-        .t-time { font-family: sans-serif; font-size: 0.95rem; color: #ffffff; min-width: 45px; text-align: right; padding-top: 5px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .t-line { width: 1px; background: rgba(255,255,255,0.5); position: relative; margin-right: 5px; }
-        .t-line::after { content: ''; position: absolute; top: 8px; left: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); border:1px solid white;}
-        .t-content { flex: 1; background: rgba(255,255,255,0.85); padding: 15px; border-radius: 8px; box-shadow: var(--shadow); position: relative; }
-        .t-act { font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 5px; padding-right: 60px; }
-        .t-note { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px; }
-        .btn-group-right { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; }
-        .icon-btn { color: #ccc; background: none; border: none; font-size: 1rem; cursor: pointer; padding: 5px; }
+        /* Itinerary List (Updated Layout: Stacked) */
+        .section-title { text-align: center; margin: 25px 0 15px; font-size: 1rem; letter-spacing: 3px; color: var(--primary); border-bottom: 1px solid rgba(0,0,0,0.1); line-height: 0.1em; width: 100%; }
+        
+        .timeline-item { 
+            display: flex; 
+            flex-direction: column; /* 改為垂直堆疊 */
+            margin-bottom: 25px; 
+            position: relative; 
+            touch-action: manipulation; /* 優化觸控 */
+            width: 100%;
+        }
+        
+        /* 時間顯示在上方 */
+        .t-time { 
+            font-family: sans-serif; 
+            font-size: 1.1rem; 
+            color: #ffffff; 
+            font-weight: bold; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
+            margin-bottom: 8px;
+            margin-left: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 行程內容方塊 (跟氣象格一樣大) */
+        .t-content { 
+            flex: 1; 
+            width: 100%;
+            background: rgba(255,255,255,0.9); 
+            padding: 20px; 
+            border-radius: 12px; /* 圓角一致 */
+            box-shadow: var(--shadow); 
+            position: relative; 
+            min-width: 0;
+            border: var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .t-act { 
+            font-size: 1.2rem; font-weight: 600; color: var(--primary); 
+            margin-bottom: 5px; padding-right: 60px; 
+            word-wrap: break-word; word-break: break-word; 
+        }
+        .t-note { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 10px; word-wrap: break-word; }
+        
+        .btn-group-right { position: absolute; top: 15px; right: 15px; display: flex; gap: 12px; }
+        .icon-btn { color: #ccc; background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 0; }
         .icon-btn.edit:hover { color: var(--primary); }
         .icon-btn.del:hover { color: var(--accent); }
-        .btn-map-jump { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: var(--primary); border: 1px solid var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-family: sans-serif; transition: 0.2s; }
+        .btn-map-jump { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: var(--primary); border: 1px solid var(--primary); padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-family: sans-serif; transition: 0.2s; margin-top: 5px; }
 
         /* Accounting */
         .fin-summary { text-align: center; padding-bottom: 15px; border-bottom: 1px dashed #ccc; margin-bottom: 15px; }
@@ -131,9 +177,9 @@
 
         /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 380px; height: 70px; background: rgba(47, 62, 70, 0.95); backdrop-filter: blur(10px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 900; }
-        .nav-item { color: rgba(255,255,255,0.5); font-size: 0.65rem; flex: 1; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;}
+        .nav-item { color: rgba(255,255,255,0.5); font-size: 0.75rem; flex: 1; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;}
         .nav-item.active { color: #fff; transform: translateY(-2px); }
-        .nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 3px; }
 
         .add-btn-fixed { position: fixed; bottom: 105px; right: 25px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; box-shadow: 0 5px 15px rgba(166, 55, 68, 0.4); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; z-index: 950; cursor: pointer; }
 
@@ -226,15 +272,12 @@
     <div class="nav-item active" onclick="switchView('itinerary')" id="nav-itin">
         <i class="fa-solid fa-route"></i>行程
     </div>
-    <div class="nav-item" onclick="switchView('accounting')" id="nav-acc">
-        <i class="fa-solid fa-coins"></i>記帳
-    </div>
     <div class="nav-item" onclick="openCurrencyModal()">
         <i class="fa-solid fa-calculator"></i>匯率
     </div>
-    <a href="https://translate.google.com/?sl=ja&tl=zh-TW&op=images" target="_blank" class="nav-item">
-        <i class="fa-solid fa-language"></i>翻譯
-    </a>
+    <div class="nav-item" onclick="switchView('accounting')" id="nav-acc">
+        <i class="fa-solid fa-coins"></i>記帳
+    </div>
 </div>
 
 <div class="modal-overlay" id="modal-itinerary">
@@ -406,9 +449,10 @@
             const mapUrl = item.link ? item.link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.activity)}`;
             return `
             <div class="timeline-item" data-index="${idx}">
-                <div class="t-handle"><i class="fa-solid fa-bars"></i></div>
-                <div class="t-time">${item.time}</div>
-                <div class="t-line"></div>
+                <div class="t-time">
+                    ${item.time}
+                    <div class="t-handle" style="display:inline-block; margin-left:5px; opacity:0.8;"><i class="fa-solid fa-grip-lines"></i></div>
+                </div>
                 <div class="t-content">
                     <div class="btn-group-right">
                         <button class="icon-btn edit" onclick="editItin(${dayIdx}, ${idx})"><i class="fa-solid fa-pen"></i></button>
@@ -423,8 +467,8 @@
 
         if(sortableInstance) sortableInstance.destroy();
         sortableInstance = new Sortable(container, {
-            handle: '.t-handle, .t-content',
-            delay: 200, delayOnTouchOnly: true, animation: 150,
+            handle: '.timeline-item', // 整個卡片都能拖
+            delay: 200, delayOnTouchOnly: true, animation: 150, // 長按 0.2s 觸發
             onEnd: function (evt) {
                 const newItems = [];
                 const itemEls = container.querySelectorAll('.timeline-item');
