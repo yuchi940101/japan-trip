@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>名古屋・北陸 12日遊</title>
+    <title>名古屋 高山 北陸遊</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -48,12 +48,32 @@
             position: relative; z-index: 1000;
             width: 100%;
         }
-        .header-title h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; }
+        .header-title h1 { margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; }
         .settings-btn { font-size: 1.2rem; color: var(--primary); cursor: pointer; padding: 5px; }
 
-        /* Date Scroller */
-        .date-scroller { display: flex; overflow-x: auto; padding: 10px 20px; gap: 12px; scrollbar-width: none; justify-content: center; width: 100%; }
+        /* Date Scroller (修改：置中但保留兩側空間) */
+        .date-scroller { 
+            display: flex; 
+            overflow-x: auto; 
+            padding: 10px 25px; /* 兩側保留 25px 空間 */
+            gap: 12px; 
+            scrollbar-width: none; 
+            /* 讓內容置中，如果內容超出寬度則靠左滾動 */
+            justify-content: flex-start; 
+            width: 100%; 
+        }
+        /* 當螢幕夠寬時，讓它真的置中 */
+        @media (min-width: 500px) {
+            .date-scroller { justify-content: center; }
+        }
+        
         .date-scroller::-webkit-scrollbar { display: none; }
+        
+        /* 確保最後一個元素右邊也有留白 */
+        .date-card:last-child {
+            margin-right: 15px; 
+        }
+
         .date-card {
             flex: 0 0 auto; width: 55px; height: 75px;
             background: var(--glass-bg); backdrop-filter: blur(8px);
@@ -76,64 +96,51 @@
             box-shadow: var(--shadow); width: 100%;
         }
 
-        /* Weather */
+        /* Weather Card Compact */
+        .weather-card-compact { padding: 15px 20px; }
         .weather-info-row { display: flex; justify-content: space-between; align-items: center; }
-        .wc-temp { font-size: 2.8rem; color: var(--primary); line-height: 1; }
+        .wc-date-display { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-bottom: 2px; font-family: sans-serif; }
+        .wc-temp { font-size: 2.2rem; color: var(--primary); line-height: 1; font-weight: bold; }
         .wc-loc { font-size: 0.9rem; letter-spacing: 1px; color: var(--text-sub); }
-        .wc-desc { font-size: 1rem; color: var(--accent); }
-        .forecast-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); }
+        .wc-desc { font-size: 0.9rem; color: var(--accent); }
+        .forecast-row { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); }
         .f-item { text-align: center; width: 18%; }
-        .f-day { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 5px; display: block; font-family: sans-serif; }
-        .f-icon { font-size: 1.2rem; margin-bottom: 5px; display: block; }
-        .f-temp { font-size: 0.8rem; font-weight: bold; color: var(--primary); font-family: sans-serif; }
+        .f-day { font-size: 0.65rem; color: var(--text-sub); margin-bottom: 3px; display: block; font-family: sans-serif; }
+        .f-icon { font-size: 1rem; margin-bottom: 3px; display: block; }
+        .f-temp { font-size: 0.75rem; font-weight: bold; color: var(--primary); font-family: sans-serif; }
 
-        /* Itinerary List (Updated Layout: Stacked) */
+        /* Itinerary List */
         .section-title { text-align: center; margin: 25px 0 15px; font-size: 1rem; letter-spacing: 3px; color: var(--primary); border-bottom: 1px solid rgba(0,0,0,0.1); line-height: 0.1em; width: 100%; }
         
         .timeline-item { 
-            display: flex; 
-            flex-direction: column; /* 改為垂直堆疊 */
-            margin-bottom: 25px; 
-            position: relative; 
-            touch-action: manipulation; /* 優化觸控 */
-            width: 100%;
+            display: flex; flex-direction: column; margin-bottom: 25px; 
+            position: relative; touch-action: manipulation; width: 100%;
         }
         
-        /* 時間顯示在上方 */
         .t-time { 
-            font-family: sans-serif; 
-            font-size: 1.1rem; 
-            color: #ffffff; 
-            font-weight: bold; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
-            margin-bottom: 8px;
-            margin-left: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-family: sans-serif; font-size: 1.1rem; color: #ffffff; 
+            font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
+            margin-bottom: 8px; margin-left: 5px; display: flex; align-items: center; gap: 10px;
         }
         
-        /* 行程內容方塊 (跟氣象格一樣大) */
         .t-content { 
-            flex: 1; 
-            width: 100%;
-            background: rgba(255,255,255,0.9); 
-            padding: 20px; 
-            border-radius: 12px; /* 圓角一致 */
-            box-shadow: var(--shadow); 
-            position: relative; 
-            min-width: 0;
-            border: var(--glass-border);
-            backdrop-filter: blur(10px);
+            flex: 1; width: 100%; background: rgba(255,255,255,0.9); 
+            padding: 20px; border-radius: 12px; box-shadow: var(--shadow); 
+            position: relative; min-width: 0; border: var(--glass-border); backdrop-filter: blur(10px);
         }
         
         .t-act { 
             font-size: 1.2rem; font-weight: 600; color: var(--primary); 
-            margin-bottom: 5px; padding-right: 60px; 
-            word-wrap: break-word; word-break: break-word; 
+            margin-bottom: 5px; padding-right: 60px; word-wrap: break-word; word-break: break-word; 
         }
         .t-note { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 10px; word-wrap: break-word; }
         
+        .t-duration {
+            font-size: 0.85rem; color: var(--accent); 
+            background: rgba(166, 55, 68, 0.1); display: inline-block; 
+            padding: 2px 8px; border-radius: 10px; margin-bottom: 10px; font-family: sans-serif;
+        }
+
         .btn-group-right { position: absolute; top: 15px; right: 15px; display: flex; gap: 12px; }
         .icon-btn { color: #ccc; background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 0; }
         .icon-btn.edit:hover { color: var(--primary); }
@@ -230,9 +237,10 @@
 <div class="container">
     
     <div id="view-itinerary" class="view-section active">
-        <div class="card-base">
+        <div class="card-base weather-card-compact">
             <div class="weather-info-row">
                 <div>
+                    <div class="wc-date-display" id="wc-date-display"></div>
                     <div class="wc-loc" id="weather-loc">LOCATING...</div>
                     <div class="wc-temp" id="wc-temp">--°</div>
                 </div>
@@ -292,6 +300,7 @@
                 <button class="btn-search-test" onclick="searchMapTest()">🔍</button>
             </div>
         </div>
+        <div class="form-group"><label>停留時間</label><input type="text" id="inp-duration" placeholder="例如: 1.5小時"></div>
         <div class="form-group"><label>Map 連結</label><input type="text" id="inp-link" placeholder="選填"></div>
         <div class="form-group"><label>備註</label><textarea id="inp-note" rows="2"></textarea></div>
         <button class="btn-save" onclick="saveItinerary()">儲存</button>
@@ -374,7 +383,9 @@
 </div>
 
 <script>
-    const START_DATE = new Date('2026-01-18T00:00:00');
+    // 關鍵修改：起始日期改為「今天」(自動抓取當下時間)
+    const START_DATE = new Date(); // 這會抓取使用者打開網頁當下的日期
+    
     const TOTAL_DAYS = 12;
     const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     
@@ -431,13 +442,20 @@
     function renderDateBar() {
         const s = document.getElementById('date-scroller'); s.innerHTML = '';
         for(let i=0; i<TOTAL_DAYS; i++) {
-            let d = new Date(START_DATE); d.setDate(START_DATE.getDate() + i);
+            let d = new Date(START_DATE); 
+            d.setDate(START_DATE.getDate() + i);
             let el = document.createElement('div');
             el.className = `date-card ${i===currentDayIndex?'active':''}`;
             el.onclick = () => { currentDayIndex = i; renderDateBar(); updateViewContent(); };
             el.innerHTML = `<div class="d-day">DAY ${i+1}</div><div class="d-date">${d.getDate()}</div>`;
             s.appendChild(el);
         }
+        
+        // 更新氣象格上的日期
+        let d = new Date(START_DATE);
+        d.setDate(START_DATE.getDate() + currentDayIndex);
+        let dateStr = `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} ${WEEKDAYS[d.getDay()]}`;
+        document.getElementById('wc-date-display').innerText = dateStr;
     }
 
     // --- 行程 ---
@@ -459,6 +477,7 @@
                         <button class="icon-btn del" onclick="deleteItin(${dayIdx}, ${idx})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <div class="t-act">${item.activity}</div>
+                    ${item.duration ? `<div class="t-duration"><i class="fa-regular fa-clock"></i> ${item.duration}</div>` : ''}
                     ${item.note ? `<div class="t-note">${item.note}</div>` : ''}
                     <a href="${mapUrl}" target="_blank" class="btn-map-jump"><i class="fa-solid fa-location-arrow"></i> 導航</a>
                 </div>
@@ -486,6 +505,7 @@
         document.getElementById('edit-mode-idx').value = idx; 
         document.getElementById('inp-time').value = item.time;
         document.getElementById('inp-act').value = item.activity;
+        document.getElementById('inp-duration').value = item.duration || "";
         document.getElementById('inp-link').value = item.link || ""; 
         document.getElementById('inp-note').value = item.note || "";
         document.getElementById('modal-itinerary').style.display = 'flex';
@@ -496,10 +516,11 @@
         const act = document.getElementById('inp-act').value;
         const note = document.getElementById('inp-note').value;
         const link = document.getElementById('inp-link').value;
+        const dur = document.getElementById('inp-duration').value;
         const editIdx = document.getElementById('edit-mode-idx').value;
         if(!act) return;
         if(!itinData[currentDayIndex]) itinData[currentDayIndex] = [];
-        const newItem = { time, activity: act, note, link };
+        const newItem = { time, activity: act, note, link, duration: dur };
         if(editIdx !== "") itinData[currentDayIndex][parseInt(editIdx)] = newItem;
         else itinData[currentDayIndex].push(newItem);
         localStorage.setItem('nagoya_trip_data', JSON.stringify(itinData));
