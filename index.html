@@ -25,11 +25,17 @@
             --primary: #2F3E46; --accent: #A63744; --text-main: #2b2b2b; --text-sub: #666;
             --glass-bg: rgba(255, 255, 255, 0.9); --glass-border: 1px solid rgba(255, 255, 255, 0.6);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            /* 天氣顏色 */
             --sun-color: #FFD700; --cloud-color: #90A4AE; --rain-color: #4FC3F7; --snow-color: #B3E5FC; --storm-color: #546E7A;
         }
 
+        /* 強制統一字體 */
+        body, button, input, textarea, select, .t-time, .wc-temp, .fin-total, .d-date, .d-day, .wc-time-display {
+            font-family: 'Shippori Mincho', 'Noto Serif TC', serif !important;
+        }
+
         body {
-            font-family: 'Shippori Mincho', 'Noto Serif TC', serif; color: var(--text-main); padding-bottom: 100px;
+            color: var(--text-main); padding-bottom: 100px;
             background-image: url('IMG_2278.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;
         }
 
@@ -56,7 +62,7 @@
             box-shadow: var(--shadow); color: var(--text-sub); transition: 0.3s;
         }
         .date-card.active { background: var(--primary); color: white; transform: translateY(-3px); border-color: var(--primary); }
-        .d-day { font-size: 0.6rem; font-family: sans-serif; }
+        .d-day { font-size: 0.6rem; }
         .d-date { font-size: 1.2rem; font-weight: 600; }
 
         .container { padding: 10px 20px; width: 100%; max-width: 600px; margin: 0 auto; }
@@ -83,12 +89,12 @@
         @keyframes pulse-bg { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(0.9); } }
 
         .weather-info-row { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; }
-        .wc-date-display { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-bottom: 2px; font-family: sans-serif; }
-        .wc-time-display { font-size: 0.8rem; color: #555; margin-bottom: 5px; font-family: monospace; letter-spacing: 1px;}
+        .wc-date-display { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-bottom: 2px; }
+        .wc-time-display { font-size: 0.8rem; color: #555; margin-bottom: 5px; letter-spacing: 1px;}
         .wc-temp { font-size: 2.2rem; color: var(--primary); line-height: 1; font-weight: bold; }
         .wc-loc { font-size: 0.9rem; letter-spacing: 1px; color: var(--text-sub); display: flex; align-items: center; gap: 5px;}
         .wc-desc { font-size: 0.9rem; color: var(--accent); display: flex; align-items: center; gap: 5px; justify-content: flex-end;}
-        .click-hint { font-size: 0.65rem; color: #999; text-align: center; margin-top: 15px; opacity: 0.7; font-family: sans-serif; border-top: 1px dashed #ddd; padding-top: 10px;}
+        .click-hint { font-size: 0.65rem; color: #999; text-align: center; margin-top: 15px; opacity: 0.7; border-top: 1px dashed #ddd; padding-top: 10px;}
 
         /* 天氣動畫 */
         @keyframes spin-glow { 0% { transform: rotate(0deg); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6)); } 50% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9)); } 100% { transform: rotate(360deg); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6)); } }
@@ -158,17 +164,33 @@
         .btn-save { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 2px; font-size: 1rem; cursor: pointer; margin-top: 10px; }
         .btn-cancel { width: 100%; padding: 10px; background: none; border: none; color: #999; margin-top: 5px; cursor: pointer; }
         
-        /* User Settings with File Input */
-        .user-setting-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 8px; }
-        .user-setting-row input[type="text"] { flex: 1; padding: 8px; border: 1px solid #eee; border-radius: 4px; font-size: 0.9rem; }
-        .btn-remove-user { color: var(--accent); cursor: pointer; font-size: 1.2rem; }
-        .btn-upload-label {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: #eee; color: #555; padding: 5px 10px; border-radius: 5px;
-            font-size: 0.8rem; cursor: pointer; white-space: nowrap;
+        /* 旅伴設定：照片選取樣式 */
+        .user-setting-row { 
+            display: flex; gap: 15px; margin-bottom: 15px; align-items: center; 
+            background: #f9f9f9; padding: 12px; border-radius: 12px; 
+            border: 1px solid #eee;
         }
-        .btn-upload-label i { margin-right: 5px; }
-        .preview-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .user-setting-row input[type="text"] { flex: 1; font-size: 1rem; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-remove-user { color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 5px; }
+        
+        /* 預覽圖 & 上傳按鈕 */
+        .avatar-wrapper { position: relative; width: 50px; height: 50px; flex: 0 0 auto; cursor: pointer; }
+        .preview-avatar { 
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover; 
+            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .upload-icon-badge {
+            position: absolute; bottom: -2px; right: -2px; 
+            background: var(--primary); color: white; border-radius: 50%; 
+            width: 20px; height: 20px; font-size: 0.6rem; 
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid white;
+        }
+        .btn-upload-text {
+            font-size: 0.8rem; color: #555; background: #eee; 
+            padding: 5px 10px; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+        }
 
         .payer-selector { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
         .payer-opt { flex: 0 0 auto; text-align: center; opacity: 0.5; cursor: pointer; transition: 0.2s; }
@@ -202,7 +224,6 @@
                 <div>
                     <div class="wc-date-display" id="wc-realtime-date">Loading...</div>
                     <div class="wc-time-display" id="wc-realtime-time">--:--:--</div>
-                    
                     <div class="wc-loc" id="weather-loc"><i class="fa-solid fa-location-dot"></i> 定位中...</div>
                     <div class="wc-temp" id="wc-temp">--°</div>
                 </div>
@@ -700,14 +721,14 @@
     function openSettings(){ 
         document.getElementById('settings-user-list').innerHTML = users.map((u, i) => `
             <div class="user-setting-row">
-                <img src="${u.avatar}" class="preview-avatar" id="prev-img-${i}">
+                <div class="avatar-wrapper" onclick="document.getElementById('file-inp-${i}').click()">
+                    <img src="${u.avatar}" class="preview-avatar" id="prev-img-${i}">
+                    <div class="upload-icon-badge"><i class="fa-solid fa-camera"></i></div>
+                </div>
                 <input type="text" value="${u.name}" id="set-name-${i}" placeholder="姓名">
-                <label class="btn-upload-label">
-                    <i class="fa-solid fa-camera"></i> 選圖
-                    <input type="file" accept="image/*" style="display:none" onchange="handleFileSelect(this, ${i})">
-                </label>
-                ${users.length > 1 ? `<i class="fa-solid fa-circle-minus btn-remove-user" onclick="removeUserField(${i})"></i>` : ''}
+                <input type="file" id="file-inp-${i}" accept="image/*" style="display:none" onchange="handleFileSelect(this, ${i})">
                 <input type="hidden" id="set-ava-${i}" value="${u.avatar}">
+                ${users.length > 1 ? `<i class="fa-solid fa-circle-minus btn-remove-user" onclick="removeUserField(${i})"></i>` : ''}
             </div>
         `).join(''); 
         document.getElementById('modal-settings').style.display='flex'; 
