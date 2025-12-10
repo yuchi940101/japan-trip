@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>名古屋・北陸 12日遊</title>
+    <title>名古屋・高山・北陸遊</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -25,6 +25,8 @@
             --primary: #2F3E46; --accent: #A63744; --text-main: #2b2b2b; --text-sub: #666;
             --glass-bg: rgba(255, 255, 255, 0.9); --glass-border: 1px solid rgba(255, 255, 255, 0.6);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            /* 天氣顏色 */
+            --sun-color: #FFD700; --cloud-color: #90A4AE; --rain-color: #4FC3F7; --snow-color: #B3E5FC; --storm-color: #546E7A;
         }
 
         body {
@@ -39,10 +41,10 @@
             background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
             position: relative; z-index: 1000; width: 100%;
         }
+        /* 修改標題：加入間隔點 */
         .header-title h1 { margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; }
         .settings-btn { font-size: 1.2rem; color: var(--primary); cursor: pointer; padding: 5px; }
 
-        /* Date Scroller (置中 + 留白) */
         .date-scroller-wrapper { display: flex; justify-content: center; width: 100%; }
         .date-scroller { display: flex; overflow-x: auto; padding: 10px 25px; gap: 12px; scrollbar-width: none; justify-content: flex-start; width: 100%; }
         @media (min-width: 600px) { .date-scroller { justify-content: center; } }
@@ -88,20 +90,20 @@
         .wc-temp { font-size: 2.2rem; color: var(--primary); line-height: 1; font-weight: bold; }
         .wc-loc { font-size: 0.9rem; letter-spacing: 1px; color: var(--text-sub); display: flex; align-items: center; gap: 5px;}
         .wc-desc { font-size: 0.9rem; color: var(--accent); display: flex; align-items: center; gap: 5px; justify-content: flex-end;}
-        .forecast-row { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 2; }
-        .f-item { text-align: center; width: 18%; }
-        .f-day { font-size: 0.65rem; color: var(--text-sub); margin-bottom: 3px; display: block; font-family: sans-serif; }
-        .f-icon { font-size: 1rem; margin-bottom: 3px; display: block; }
-        .f-temp { font-size: 0.75rem; font-weight: bold; color: var(--primary); font-family: sans-serif; }
-        .click-hint { font-size: 0.65rem; color: #999; text-align: center; margin-top: 8px; opacity: 0.7; font-family: sans-serif;}
+        .click-hint { font-size: 0.65rem; color: #999; text-align: center; margin-top: 15px; opacity: 0.7; font-family: sans-serif; border-top: 1px dashed #ddd; padding-top: 10px;}
 
-        /* Hourly Weather */
-        .hourly-list { max-height: 60vh; overflow-y: auto; }
-        .hourly-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .h-time { font-family: sans-serif; font-weight: bold; color: var(--primary); width: 60px; }
-        .h-icon { font-size: 1.2rem; width: 40px; text-align: center; }
-        .h-temp { font-weight: bold; color: var(--accent); }
-        .h-rain { font-size: 0.75rem; color: #666; width: 50px; text-align: right; }
+        /* 天氣動畫 */
+        @keyframes spin-glow { 0% { transform: rotate(0deg); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6)); } 50% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9)); } 100% { transform: rotate(360deg); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6)); } }
+        .anim-sun { color: var(--sun-color); font-size: 2.5rem; animation: spin-glow 12s linear infinite; display: inline-block; margin-bottom: 5px; }
+        @keyframes float-cloud { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .anim-cloud { color: var(--cloud-color); font-size: 2.5rem; animation: float-cloud 3s ease-in-out infinite; display: inline-block; margin-bottom: 5px; }
+        @keyframes rain-shake { 0%, 100% { transform: translateX(0); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+        .anim-rain { color: var(--rain-color); font-size: 2.5rem; animation: rain-shake 1.5s ease-in-out infinite; display: inline-block; margin-bottom: 5px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
+        @keyframes snow-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+        .anim-snow { color: var(--snow-color); font-size: 2.5rem; animation: snow-spin 6s linear infinite; display: inline-block; margin-bottom: 5px; filter: drop-shadow(0 0 5px rgba(179, 229, 252, 0.8)); }
+        @keyframes storm-flash { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 0 transparent); } 50% { opacity: 0.8; filter: drop-shadow(0 0 10px #FFEB3B); } }
+        .anim-storm { color: var(--storm-color); font-size: 2.5rem; animation: storm-flash 2s infinite; display: inline-block; margin-bottom: 5px; }
+        .anim-default { color: #ccc; font-size: 2.5rem; margin-bottom: 5px; }
 
         /* Itinerary */
         .section-title { text-align: center; margin: 25px 0 15px; font-size: 1rem; letter-spacing: 3px; color: var(--primary); border-bottom: 1px solid rgba(0,0,0,0.1); line-height: 0.1em; width: 100%; }
@@ -177,7 +179,7 @@
 <div class="bg-overlay"></div>
 
 <header>
-    <div class="header-title"><h1>名古屋 高山 北陸遊</h1></div>
+    <div class="header-title"><h1>名古屋・高山・北陸遊</h1></div>
     <div class="settings-btn" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
 </header>
 
@@ -187,21 +189,21 @@
 
 <div class="container">
     <div id="view-itinerary" class="view-section active">
-        <div class="card-base weather-card-dynamic" onclick="openWeatherDetail()">
+        <div class="card-base weather-card-dynamic" onclick="openTenki()">
             <div class="weather-info-row">
                 <div>
                     <div class="wc-date-display" id="wc-realtime-date">Loading...</div>
                     <div class="wc-time-display" id="wc-realtime-time">--:--:--</div>
                     
-                    <div class="wc-loc" id="weather-loc"><i class="fa-solid fa-location-dot"></i> LOCATING...</div>
+                    <div class="wc-loc" id="weather-loc"><i class="fa-solid fa-location-dot"></i> 定位中...</div>
                     <div class="wc-temp" id="wc-temp">--°</div>
                 </div>
-                <div style="text-align:right">
+                <div style="text-align:right; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div id="wc-icon-container"></div>
                     <div class="wc-desc" id="wc-desc">...</div>
                 </div>
             </div>
-            <div class="forecast-row" id="forecast-row"></div>
-            <div class="click-hint"><i class="fa-regular fa-hand-pointer"></i> 查看每小時天氣</div>
+            <div class="click-hint"><i class="fa-solid fa-up-right-from-square"></i> 點擊前往 tenki.jp 查詢詳細天氣</div>
         </div>
         <div class="section-title">本日行程</div>
         <div id="itinerary-list"></div>
@@ -290,16 +292,7 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="modal-weather-detail">
-    <div class="modal">
-        <h3 id="wd-title">每小時天氣詳情</h3>
-        <div id="wd-list" class="hourly-list">載入中...</div>
-        <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal('modal-weather-detail')">關閉</button>
-    </div>
-</div>
-
 <script>
-    // 密碼鎖 (0503)
     const MY_PASSWORD = "0503"; 
     if (localStorage.getItem('app_password') !== MY_PASSWORD) {
         let input = prompt("🔒 請輸入通關密碼：");
@@ -307,7 +300,6 @@
         else { alert("密碼錯誤！無法進入"); document.body.innerHTML = ""; window.location.href = "about:blank"; }
     }
 
-    // Firebase 設定
     const firebaseConfig = {
       apiKey: "AIzaSyBu0wGXAk5rV-ftOVzEMenGeX8oiRUVA5g",
       authDomain: "nagoya-trip-ab8fb.firebaseapp.com",
@@ -321,7 +313,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 行程日期 (固定 1/18 ~ 1/29)
     const TRIP_START_DATE = new Date('2026-01-18T00:00:00');
     const TOTAL_DAYS = 12;
     const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -340,7 +331,6 @@
     let hourlyWeatherData = null; 
 
     function init() {
-        // 監聽雲端資料
         db.ref('tripData').on('value', (snapshot) => {
             const val = snapshot.val();
             if (val) {
@@ -396,7 +386,6 @@
         else if(currentView === 'accounting') renderAccountingView(currentDayIndex);
     }
 
-    // 渲染上方固定日期 (1/18 ~ 1/29)
     function renderDateBar() {
         const s = document.getElementById('date-scroller'); s.innerHTML = '';
         for(let i=0; i<TOTAL_DAYS; i++) {
@@ -424,111 +413,82 @@
         document.getElementById('wc-realtime-date').innerText = dateStr;
         document.getElementById('wc-realtime-time').innerText = timeStr;
     }
-
-    async function fetchLocationName(lat, lon) {
-        try { const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=zh-TW`; const res = await fetch(url); const data = await res.json(); const city = data.address.city || data.address.county || ""; const district = data.address.suburb || data.address.town || data.address.district || ""; if (city || district) document.getElementById('weather-loc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${city} ${district}`; } catch (e) {}
-    }
     
-    async function fetchWeather(lat, lon) {
-        fetchLocationName(lat, lon);
+    // 增加抓取地址的功能，並與天氣並行執行
+    async function fetchLocationName(lat, lon) {
         try { 
-            // 抓取包含 hourly 的資料
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode,precipitation_probability&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=3`); 
-            const data = await res.json();
-            hourlyWeatherData = data; 
-
-            document.getElementById('wc-temp').innerText = `${Math.round(data.current_weather.temperature)}°`; 
-            document.getElementById('wc-desc').innerText = getWeatherDesc(data.current_weather.weathercode); 
-            
-            let h = ''; 
-            // 顯示當日預報
-            for(let i=0; i<1; i++) { 
-                if(data.daily.time[i]) {
-                    const d = new Date(); // 當下
-                    h+=`<div class="f-item"><span class="f-day">TODAY</span><span class="f-icon">${getWeatherIcon(data.daily.weathercode[i])}</span><span class="f-temp">${Math.round(data.daily.temperature_2m_min[i])}°-${Math.round(data.daily.temperature_2m_max[i])}°</span></div>`; 
-                }
-            } 
-            // 加上後兩天
-            for(let i=1; i<=2; i++) { 
-                if(data.daily.time[i]) {
-                    const d = new Date(); d.setDate(d.getDate() + i);
-                    h+=`<div class="f-item"><span class="f-day">${WEEKDAYS[d.getDay()]}</span><span class="f-icon">${getWeatherIcon(data.daily.weathercode[i])}</span><span class="f-temp">${Math.round(data.daily.temperature_2m_min[i])}°-${Math.round(data.daily.temperature_2m_max[i])}°</span></div>`; 
-                }
-            } 
-            document.getElementById('forecast-row').innerHTML = h; 
-        } catch(e){}
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=zh-TW`; 
+            const res = await fetch(url); 
+            const data = await res.json(); 
+            const city = data.address.city || data.address.county || ""; 
+            const district = data.address.suburb || data.address.town || data.address.district || ""; 
+            if (city || district) document.getElementById('weather-loc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${city} ${district}`; 
+        } catch (e) {
+            console.error("Address lookup failed", e);
+        }
     }
 
-    // 關鍵修正：加入 5秒超時與不預設名古屋 (改顯示定位失敗)
+    async function fetchWeather(lat, lon) {
+        try { 
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`); 
+            const data = await res.json();
+            
+            document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-dot"></i> 目前位置';
+            document.getElementById('wc-temp').innerText = `${Math.round(data.current_weather.temperature)}°`;
+            
+            const code = data.current_weather.weathercode;
+            const iconContainer = document.getElementById('wc-icon-container');
+            
+            if(code <= 3) {
+                iconContainer.innerHTML = '<i class="fa-solid fa-sun anim-sun"></i>';
+            } else if (code <= 48) {
+                iconContainer.innerHTML = '<i class="fa-solid fa-cloud anim-cloud"></i>';
+            } else if (code <= 67) {
+                iconContainer.innerHTML = '<i class="fa-solid fa-cloud-rain anim-rain"></i>';
+            } else if (code <= 82) {
+                iconContainer.innerHTML = '<i class="fa-solid fa-cloud-showers-heavy anim-rain"></i>';
+            } else if (code >= 95) {
+                iconContainer.innerHTML = '<i class="fa-solid fa-cloud-bolt anim-storm"></i>';
+            } else {
+                iconContainer.innerHTML = '<i class="fa-regular fa-snowflake anim-snow"></i>';
+            }
+            document.getElementById('wc-desc').innerText = getWeatherDesc(code);
+        } catch(e){
+             console.error(e);
+        }
+    }
+
     function getLocationAndWeather() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                p => fetchWeather(p.coords.latitude, p.coords.longitude),
+                p => {
+                    // 並行執行：先顯示天氣，背景抓地址
+                    fetchWeather(p.coords.latitude, p.coords.longitude);
+                    fetchLocationName(p.coords.latitude, p.coords.longitude);
+                },
                 (e) => { 
-                    // 定位失敗：不抓取預設天氣，改顯示提示
                     document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-slash"></i> 無法定位';
                     document.getElementById('wc-temp').innerText = "--°";
                     document.getElementById('wc-desc').innerText = "請開啟 GPS";
+                    document.getElementById('wc-icon-container').innerHTML = '<i class="fa-solid fa-circle-exclamation anim-default"></i>';
                 },
-                { timeout: 5000, enableHighAccuracy: false } // 5秒超時，不用高精度
+                { timeout: 5000, enableHighAccuracy: false } 
             );
         } else {
             document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-ban"></i> 不支援定位';
         }
     }
 
-    function openWeatherDetail() {
-        if(!hourlyWeatherData) { alert("正在載入天氣資料..."); return; }
-        updateWeatherDetailContent();
-        document.getElementById('modal-weather-detail').style.display = 'flex';
+    function openTenki() {
+        window.open('https://tenki.jp/', '_blank');
     }
 
-    function updateWeatherDetailContent() {
-        if(!hourlyWeatherData) return;
-        const now = new Date();
-        const currentHour = now.getHours();
-        
-        document.getElementById('wd-title').innerText = "未來 24 小時天氣";
-        
-        let html = '';
-        // 顯示從當前小時開始的 24 小時
-        for(let i=0; i<24; i++) {
-            let idx = currentHour + i;
-            // 確保 index 在範圍內
-            if(hourlyWeatherData.hourly.time[idx]) {
-                let temp = hourlyWeatherData.hourly.temperature_2m[idx];
-                let code = hourlyWeatherData.hourly.weathercode[idx];
-                let rain = hourlyWeatherData.hourly.precipitation_probability[idx];
-                
-                // 計算顯示時間 (00:00)
-                let displayTime = (currentHour + i) % 24;
-                let timeLabel = `${displayTime}:00`;
-                if(i===0) timeLabel = "現在";
-
-                html += `
-                <div class="hourly-item">
-                    <div class="h-time">${timeLabel}</div>
-                    <div class="h-icon">${getWeatherIcon(code)}</div>
-                    <div class="h-temp">${Math.round(temp)}°</div>
-                    <div class="h-rain"><i class="fa-solid fa-droplet"></i> ${rain}%</div>
-                </div>`;
-            }
-        }
-        document.getElementById('wd-list').innerHTML = html;
-    }
-
-    function getWeatherIcon(code) {
-        if(code <= 3) return '☀';
-        if(code <= 48) return '☁';
-        if(code <= 67) return '☂';
-        if(code <= 82) return '⛈';
-        return '❄';
-    }
     function getWeatherDesc(code) {
         if(code <= 3) return '晴朗';
         if(code <= 48) return '多雲';
         if(code <= 67) return '有雨';
-        if(code <= 82) return '雷雨';
+        if(code <= 82) return '陣雨';
+        if(code >= 95) return '雷雨';
         return '降雪';
     }
 
@@ -739,16 +699,6 @@
         else { renderPayerSelector(); document.getElementById('inp-amount').value=''; document.getElementById('inp-item').value=''; document.getElementById('inp-personal').checked = false; setCurrency('JPY'); document.getElementById('modal-accounting').style.display='flex'; }
     }
     function closeModal(id){document.getElementById(id).style.display='none';}
-
-    // Weather
-    async function fetchLocationName(lat, lon) {
-        try { const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=zh-TW`; const res = await fetch(url); const data = await res.json(); const city = data.address.city || data.address.county || ""; const district = data.address.suburb || data.address.town || data.address.district || ""; if (city || district) document.getElementById('weather-loc').innerText = `${city} ${district}`; } catch (e) {}
-    }
-    async function fetchWeather(lat, lon) {
-        fetchLocationName(lat, lon);
-        try { const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`); const data = await res.json(); document.getElementById('wc-temp').innerText = `${Math.round(data.current_weather.temperature)}°`; document.getElementById('wc-desc').innerText = (data.current_weather.weathercode<=3?'晴朗':data.current_weather.weathercode<=67?'有雨':'多雲'); let h = ''; for(let i=1; i<=5; i++) { const d = new Date(data.daily.time[i]); h+=`<div class="f-item"><span class="f-day">${WEEKDAYS[d.getDay()]}</span><span class="f-icon">${data.daily.weathercode[i]<=3?'☀':data.daily.weathercode[i]<=67?'☂':'☁'}</span><span class="f-temp">${Math.round(data.daily.temperature_2m_min[i])}°-${Math.round(data.daily.temperature_2m_max[i])}°</span></div>`; } document.getElementById('forecast-row').innerHTML = h; } catch(e){}
-    }
-    function getLocationAndWeather() { if(navigator.geolocation) navigator.geolocation.getCurrentPosition(p=>fetchWeather(p.coords.latitude, p.coords.longitude), ()=>fetchWeather(35.18, 136.90)); else fetchWeather(35.18, 136.90); }
 
     init();
 </script>
