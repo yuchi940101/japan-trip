@@ -115,37 +115,26 @@
         .airport-name { font-size: 0.75rem; color: #ddd; margin-top: 3px; letter-spacing: 0.5px;}
         
         .plane-divider { flex: 0 0 auto; padding: 0 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .flight-no { font-size: 0.85rem; color: var(--tech-cyan); font-weight: bold; margin-bottom: 2px; letter-spacing: 1px; }
+        .flight-no { font-size: 0.75rem; color: var(--tech-cyan); font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
         
         .plane-divider i { 
             transform: rotate(0deg) !important;
             color: #fff; 
             filter: drop-shadow(0 0 5px rgba(255,255,255,0.9)); 
-            font-size: 1.5rem; 
+            font-size: 1.6rem; 
             display: inline-block;
-            margin-top: 12px;
-            margin-bottom: 5px;
         }
 
         .time-row { display: flex; justify-content: space-between; position: relative; z-index: 1; padding-top: 8px; border-top: 1px dashed rgba(84,220,255,0.3); }
         .tech-time { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
         .time-label { font-size: 0.65rem; color: var(--tech-cyan); opacity: 0.8; }
-
-        /* 動態條碼 */
-        @keyframes barcode-move {
-            0% { background-position-x: 0px; }
-            100% { background-position-x: 20px; } /* 無縫循環 */
-        }
+        
+        /* 靜態條碼 */
         .ticket-barcode { 
-            height: 15px; 
-            margin-top: 15px; 
-            opacity: 0.5; 
-            mix-blend-mode: screen;
-            /* 條碼紋理 */
+            height: 15px; margin-top: 15px; opacity: 0.5; mix-blend-mode: screen;
             background: repeating-linear-gradient(90deg, var(--tech-cyan), var(--tech-cyan) 2px, transparent 2px, transparent 6px);
-            /* 套用動畫 */
-            animation: barcode-move 3s linear infinite;
         }
+        .app-link-hint { text-align: center; font-size: 0.6rem; color: rgba(84, 220, 255, 0.7); margin-top: 8px; letter-spacing: 1px; }
 
         /* Weather Card */
         .weather-card-dynamic {
@@ -187,12 +176,16 @@
         .t-content { flex: 1; width: 100%; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); position: relative; min-width: 0; border: var(--glass-border); backdrop-filter: blur(10px); }
         .t-act { font-size: 1.3rem; font-weight: 600; color: var(--primary); margin-bottom: 5px; padding-right: 60px; word-wrap: break-word; word-break: break-word; }
         .t-note { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 10px; word-wrap: break-word; }
-        .t-duration { font-size: 0.9rem; color: var(--accent); background: rgba(166, 55, 68, 0.1); display: inline-block; padding: 2px 8px; border-radius: 10px; margin-bottom: 10px; }
+        .t-duration { 
+            font-size: 0.9rem; color: var(--accent); background: rgba(166, 55, 68, 0.1); 
+            display: inline-block; padding: 2px 8px; border-radius: 10px; 
+            margin-left: 8px; vertical-align: middle; margin-bottom: 0;
+        }
         .btn-group-right { position: absolute; top: 15px; right: 15px; display: flex; gap: 12px; }
         .icon-btn { color: #ccc; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0; }
         .icon-btn.edit:hover { color: var(--primary); }
         .icon-btn.del:hover { color: var(--accent); }
-        .btn-map-jump { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: var(--primary); border: 1px solid var(--primary); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; transition: 0.2s; margin-top: 5px; }
+        .btn-map-jump { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: var(--primary); border: 1px solid var(--primary); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; transition: 0.2s; margin-top: 5px; vertical-align: middle; }
 
         /* Accounting & Others */
         .fin-summary { text-align: center; padding-bottom: 15px; border-bottom: 1px dashed #ccc; margin-bottom: 15px; }
@@ -224,7 +217,10 @@
         .nav-item { color: rgba(255,255,255,0.5); font-size: 0.8rem; flex: 1; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;}
         .nav-item.active { color: #fff; transform: translateY(-2px); }
         .nav-item i { font-size: 1.4rem; margin-bottom: 3px; }
+        
+        /* Add Button (統一紅色) */
         .add-btn-fixed { position: fixed; bottom: 105px; right: 25px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; box-shadow: 0 5px 15px rgba(166, 55, 68, 0.4); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; z-index: 950; cursor: pointer; }
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.6); backdrop-filter: blur(5px); z-index: 2000; align-items: center; justify-content: center; }
         .modal { background: #fff; width: 85%; max-width: 340px; padding: 25px; border-radius: 5px; border: 1px solid #eee; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-height: 85vh; overflow-y: auto; }
         .modal h3 { text-align: center; color: var(--primary); margin-top: 0; letter-spacing: 2px; }
@@ -234,10 +230,7 @@
         
         /* 停留時間選擇器 */
         .duration-picker-group { display: flex; align-items: center; gap: 10px; }
-        .duration-picker-group select {
-            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.1rem; outline: none; background: white; text-align: center;
-            appearance: none; -webkit-appearance: none;
-        }
+        .duration-picker-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.1rem; outline: none; background: white; text-align: center; appearance: none; -webkit-appearance: none; }
         .duration-picker-group span { font-size: 0.9rem; color: #666; }
 
         .input-group-row { display: flex; gap: 10px; align-items: flex-end; }
@@ -247,14 +240,8 @@
         .btn-cancel { width: 100%; padding: 10px; background: none; border: none; color: #999; margin-top: 5px; cursor: pointer; }
         
         /* 旅伴設定 */
-        .user-setting-row { 
-            display: flex; gap: 10px; margin-bottom: 15px; align-items: center; 
-            background: #f9f9f9; padding: 12px; border-radius: 12px; border: 1px solid #eee; 
-        }
-        .user-setting-row input[type="text"] { 
-            flex: 1; font-size: 1rem; padding: 8px; border: 1px solid #ddd; border-radius: 8px; 
-            min-width: 0; 
-        }
+        .user-setting-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; background: #f9f9f9; padding: 12px; border-radius: 12px; border: 1px solid #eee; }
+        .user-setting-row input[type="text"] { flex: 1; font-size: 1rem; padding: 8px; border: 1px solid #ddd; border-radius: 8px; min-width: 0; }
         .btn-remove-user { color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 5px; }
         .avatar-wrapper { position: relative; width: 45px; height: 45px; flex: 0 0 auto; cursor: pointer; }
         .preview-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -306,8 +293,13 @@
         <div id="boarding-pass-container" class="tech-ticket-container" onclick="openTigerair()">
             <div class="tech-ticket">
                 <div class="ticket-header">
-                    <span><i class="fa-solid fa-plane-departure"></i> BOARDING PASS</span>
-                    <span>2026.01.18 (SUN)</span>
+                    <div>
+                        <div class="pass-label" style="color:var(--tech-cyan); font-weight:bold; font-size:0.75rem;">BOARDING PASS</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="date-info">2026.01.18</div>
+                        <div class="date-day">SUNDAY</div>
+                    </div>
                 </div>
                 <div class="route-row">
                     <div class="airport-col" style="text-align:left;">
@@ -315,8 +307,8 @@
                         <div class="airport-name">Taoyuan</div>
                     </div>
                     <div class="plane-divider">
-                        <div class="flight-no">IT206</div>
                         <i class="fa-solid fa-plane-departure"></i>
+                        <div class="flight-no">IT206</div>
                     </div>
                     <div class="airport-col" style="text-align:right;">
                         <div class="airport-code">NGO</div>
@@ -340,8 +332,13 @@
         <div id="return-pass-container" class="tech-ticket-container" onclick="openTigerair()">
             <div class="tech-ticket">
                 <div class="ticket-header">
-                    <span><i class="fa-solid fa-plane-departure"></i> BOARDING PASS</span>
-                    <span>2026.01.29 (THU)</span>
+                    <div>
+                        <div class="pass-label" style="color:var(--tech-cyan); font-weight:bold; font-size:0.75rem;">BOARDING PASS</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="date-info">2026.01.29</div>
+                        <div class="date-day">THURSDAY</div>
+                    </div>
                 </div>
                 <div class="route-row">
                     <div class="airport-col" style="text-align:left;">
@@ -349,8 +346,8 @@
                         <div class="airport-name">Komatsu</div>
                     </div>
                     <div class="plane-divider">
-                        <div class="flight-no">IT253</div>
                         <i class="fa-solid fa-plane-departure"></i>
+                        <div class="flight-no">IT253</div>
                     </div>
                     <div class="airport-col" style="text-align:right;">
                         <div class="airport-code">TPE</div>
@@ -426,7 +423,7 @@
 <div class="modal-overlay" id="modal-accounting">
     <div class="modal">
         <h3>記一筆</h3>
-        <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">付款人 (誰先墊錢?)</div>
+        <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">付款人</div>
         <div class="payer-selector" id="payer-selector"></div>
         <div class="form-group" style="margin-top:20px;">
             <label>金額</label><input type="number" id="inp-amount" placeholder="金額" style="font-size:1.5rem; text-align:center;">
@@ -494,6 +491,7 @@
     const TOTAL_DAYS = 12;
     const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     
+    // 預設使用者資料 (防呆機制)
     const DEFAULT_USERS = [
         { id: 'u1', name: '我', avatar: 'IMG_8709.jpeg' }, 
         { id: 'u2', name: '旅伴', avatar: 'IMG_0195.jpeg' }
@@ -501,7 +499,9 @@
 
     let currentDayIndex = 0;
     let currentView = 'itinerary';
-    let users = [], itinData = {}, expenseData = {}, selectedPayerId = null;
+    // 關鍵修正：初始化 users 以免為空
+    let users = JSON.parse(JSON.stringify(DEFAULT_USERS));
+    let itinData = {}, expenseData = {}, selectedPayerId = null;
     let currentCurrency = 'JPY';
     let sortableInstance = null;
     let exchangeRate = 0.22; 
@@ -513,17 +513,18 @@
         db.ref('tripData').on('value', (snapshot) => {
             const val = snapshot.val();
             if (val) {
+                // 如果 Firebase 有資料就更新
                 users = val.users || JSON.parse(JSON.stringify(DEFAULT_USERS));
-                itinData = val.itinData || {0:[{time:"15:10",activity:"桃園起飛",note:"CI150",link:""}]};
+                itinData = val.itinData || {}; 
                 expenseData = val.expenseData || {};
                 
+                // 確保 selectedPayerId 有值
                 if (!selectedPayerId && users.length > 0) selectedPayerId = users[0].id;
+                
                 renderDateBar();
                 updateViewContent();
             } else {
-                users = JSON.parse(JSON.stringify(DEFAULT_USERS));
-                selectedPayerId = users[0].id;
-                itinData = {0:[{time:"15:10",activity:"桃園起飛",note:"CI150",link:""}]};
+                // 如果 Firebase 是空的
                 saveToFirebase();
             }
         });
@@ -573,9 +574,11 @@
 
         if(view === 'itinerary') {
             itinNav.classList.add('active');
-            addBtn.style.display = 'flex'; addBtn.style.background = 'var(--primary)';
+            // 行程模式：按鈕維持紅色 (Accent)
+            addBtn.style.display = 'flex'; addBtn.style.background = 'var(--accent)';
         } else if(view === 'accounting') {
             accNav.classList.add('active');
+            // 記帳模式：按鈕維持紅色 (Accent)
             addBtn.style.display = 'flex'; addBtn.style.background = 'var(--accent)';
         } 
         updateViewContent();
@@ -585,7 +588,7 @@
         if(currentView === 'itinerary') renderItineraryList(currentDayIndex);
         else if(currentView === 'accounting') renderAccountingView(currentDayIndex);
 
-        // 控制機票顯示：Day 1 顯示去程，Day 12 顯示回程
+        // 控制機票顯示
         const depPass = document.getElementById('boarding-pass-container');
         const retPass = document.getElementById('return-pass-container');
         
@@ -637,7 +640,10 @@
             const city = data.address.city || data.address.county || ""; 
             const district = data.address.suburb || data.address.town || data.address.district || ""; 
             if (city || district) document.getElementById('weather-loc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${city} ${district}`; 
-        } catch (e) { console.error(e); }
+        } catch (e) { 
+            console.error(e);
+            document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-slash"></i> 無法偵測位置'; 
+        }
     }
 
     async function fetchWeather(lat, lon) {
@@ -660,26 +666,32 @@
 
     function getLocationAndWeather() {
         if (navigator.geolocation) {
+            document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 定位中...';
             navigator.geolocation.getCurrentPosition(
-                p => { fetchWeather(p.coords.latitude, p.coords.longitude); fetchLocationName(p.coords.latitude, p.coords.longitude); },
+                p => { 
+                    fetchWeather(p.coords.latitude, p.coords.longitude); 
+                    fetchLocationName(p.coords.latitude, p.coords.longitude); 
+                },
                 (e) => { 
-                    document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-slash"></i> 無法定位';
+                    document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-slash"></i> 無法偵測位置';
                     document.getElementById('wc-temp').innerText = "--°";
                     document.getElementById('wc-desc').innerText = "請開啟 GPS";
                     document.getElementById('wc-icon-container').innerHTML = '<i class="fa-solid fa-circle-exclamation anim-default"></i>';
                 },
                 { timeout: 5000, enableHighAccuracy: false } 
             );
-        } else { document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-ban"></i> 不支援定位'; }
+        } else { 
+            document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-ban"></i> 不支援定位'; 
+        }
     }
 
     function openTenki() { window.open('https://tenki.jp/', '_blank'); }
-    function openTigerair() { window.open('https://apps.apple.com/tw/app/tigerair-taiwan/id1256886867', '_blank'); }
+    function openTigerair() { window.open('https://www.tigerairtw.com/zh-tw', '_blank'); }
     function getWeatherDesc(code) { if(code <= 3) return '晴朗'; if(code <= 48) return '多雲'; if(code <= 67) return '有雨'; if(code <= 82) return '陣雨'; if(code >= 95) return '雷雨'; return '降雪'; }
 
     // --- Helper for Duration ---
     function minsToParts(mins) {
-        if (!mins && mins !== 0) return {h:1, m:0}; // 預設 1 小時
+        if (!mins && mins !== 0) return {h:1, m:0}; 
         const h = Math.floor(mins / 60);
         const m = mins % 60;
         return {h, m};
@@ -721,9 +733,13 @@
                         <button class="icon-btn del" onclick="deleteItin(${dayIdx}, ${idx})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <div class="t-act">${item.activity}</div>
-                    ${durDisplay ? `<div class="t-duration"><i class="fa-regular fa-clock"></i> ${durDisplay}</div>` : ''}
-                    ${item.note ? `<div class="t-note">${item.note}</div>` : ''}
-                    <a href="${mapUrl}" target="_blank" class="btn-map-jump"><i class="fa-solid fa-location-arrow"></i> 導航</a>
+                    
+                    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:5px;">
+                        <a href="${mapUrl}" target="_blank" class="btn-map-jump"><i class="fa-solid fa-location-arrow"></i> 導航</a>
+                        ${durDisplay ? `<div class="t-duration"><i class="fa-regular fa-clock"></i> ${durDisplay}</div>` : ''}
+                    </div>
+
+                    ${item.note ? `<div class="t-note" style="margin-top:10px;">${item.note}</div>` : ''}
                 </div>
             </div>`;
         }).join('') : '<div style="text-align:center;color:#ccc;font-size:0.8rem;padding:20px;">點擊 + 新增行程</div>';
@@ -898,6 +914,26 @@
         document.getElementById('settle-content').innerHTML = content;
     }
 
+    function renderPayerSelector() { document.getElementById('payer-selector').innerHTML = users.map(u => `<div class="payer-opt ${selectedPayerId === u.id ? 'selected' : ''}" onclick="selectPayer('${u.id}')"><img src="${u.avatar}"><div style="font-size:0.7rem;">${u.name}</div></div>`).join(''); }
+    function selectPayer(id) { selectedPayerId = id; renderPayerSelector(); }
+    function setCurrency(c) { currentCurrency = c; document.getElementById('curr-jpy').className = c==='JPY'?'curr-opt selected':'curr-opt'; document.getElementById('curr-twd').className = c==='TWD'?'curr-opt selected':'curr-opt'; }
+
+    function saveExpense() {
+        const amt = document.getElementById('inp-amount').value;
+        const item = document.getElementById('inp-item').value;
+        const isPersonal = document.getElementById('inp-personal').checked;
+        if(!amt || !item) return;
+        if(!expenseData[currentDayIndex]) expenseData[currentDayIndex] = [];
+        
+        // 防呆：如果還沒選付款人，強制選第一位
+        const payer = selectedPayerId || (users.length > 0 ? users[0].id : 'unknown');
+        
+        expenseData[currentDayIndex].push({ amount: amt, item: item, payer: payer, curr: currentCurrency, isPersonal: isPersonal });
+        saveToFirebase();
+        closeModal('modal-accounting');
+    }
+    function deleteExpense(d, i){ if(confirm('刪除?')){ expenseData[d].splice(i,1); saveToFirebase(); }}
+
     // --- Settings with Image Upload & Compression ---
     function openSettings(){ 
         document.getElementById('settings-user-list').innerHTML = users.map((u, i) => `
@@ -984,40 +1020,57 @@
         if(currentView==='accounting') renderAccountingView(currentDayIndex); 
     }
 
+    // 關鍵修復：確保記帳彈窗能正確開啟
     function openAddModal() {
-        if(currentView==='itinerary'){ 
-            document.getElementById('modal-itin-title').innerText="新增行程"; 
-            document.getElementById('edit-mode-idx').value=""; 
-            
-            // 智慧時間推算
-            let nextTime = "09:00"; 
-            const currentList = itinData[currentDayIndex] || [];
-            if (currentList.length > 0) {
-                const lastItem = currentList[currentList.length - 1];
-                const lastTime = lastItem.time;
-                // 注意：duration 現在存的是分鐘數
-                const dur = parseInt(lastItem.duration) || 60; 
-                if (lastTime) {
-                    nextTime = addMinutes(lastTime, dur); 
+        try {
+            if(currentView==='itinerary'){ 
+                document.getElementById('modal-itin-title').innerText="新增行程"; 
+                document.getElementById('edit-mode-idx').value=""; 
+                
+                let nextTime = "09:00"; 
+                const currentList = itinData[currentDayIndex] || [];
+                if (currentList.length > 0) {
+                    const lastItem = currentList[currentList.length - 1];
+                    const lastTime = lastItem.time;
+                    const dur = parseInt(lastItem.duration) || 60; 
+                    if (lastTime) {
+                        nextTime = addMinutes(lastTime, dur); 
+                    }
                 }
-            }
-            document.getElementById('inp-time').value = nextTime;
+                document.getElementById('inp-time').value = nextTime;
 
-            document.getElementById('inp-act').value=""; 
-            document.getElementById('inp-link').value=""; 
-            document.getElementById('inp-note').value=""; 
-            
-            // 重置雙選單 (預設1小時)
-            document.getElementById('sel-dur-hour').value = 1;
-            document.getElementById('sel-dur-min').value = 0;
-            
-            document.getElementById('modal-itinerary').style.display='flex'; 
-        } else { 
-            renderPayerSelector(); 
-            document.getElementById('inp-amount').value=''; 
-            document.getElementById('inp-item').value=''; 
-            document.getElementById('inp-personal').checked = false; 
-            setCurrency('JPY'); 
+                document.getElementById('inp-act').value=""; 
+                document.getElementById('inp-link').value=""; 
+                document.getElementById('inp-note').value=""; 
+                
+                // 重置雙選單 (預設1小時)
+                document.getElementById('sel-dur-hour').value = 1;
+                document.getElementById('sel-dur-min').value = 0;
+                
+                document.getElementById('modal-itinerary').style.display='flex'; 
+            } else { 
+                // 記帳模式
+                // 再次防呆
+                if (!users || !Array.isArray(users) || users.length === 0) {
+                     users = JSON.parse(JSON.stringify(DEFAULT_USERS));
+                }
+                renderPayerSelector();
+                
+                if (!selectedPayerId && users.length > 0) {
+                    selectedPayerId = users[0].id;
+                    renderPayerSelector();
+                }
+
+                document.getElementById('inp-amount').value=''; 
+                document.getElementById('inp-item').value=''; 
+                document.getElementById('inp-personal').checked = false; 
+                setCurrency('JPY'); 
+                document.getElementById('modal-accounting').style.display='flex'; 
+            }
+        } catch(e) {
+            console.error(e);
+            alert("系統發生錯誤，嘗試重置..." + e.message);
+            // 緊急處理：強制打開，避免卡死
             document.getElementById('modal-accounting').style.display='flex'; 
         }
     }
