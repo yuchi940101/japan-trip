@@ -98,7 +98,10 @@
             padding: 15px 20px;
             margin-bottom: 20px;
             position: relative; overflow: hidden; color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+        .tech-ticket:active { transform: scale(0.98); }
         .tech-ticket::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(90deg, rgba(84,220,255,0.03) 1px, transparent 1px), linear-gradient(rgba(84,220,255,0.03) 1px, transparent 1px);
@@ -127,6 +130,22 @@
         .time-row { display: flex; justify-content: space-between; position: relative; z-index: 1; padding-top: 8px; border-top: 1px dashed rgba(84,220,255,0.3); }
         .tech-time { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
         .time-label { font-size: 0.65rem; color: var(--tech-cyan); opacity: 0.8; }
+
+        /* 動態條碼 */
+        @keyframes barcode-move {
+            0% { background-position-x: 0px; }
+            100% { background-position-x: 20px; } /* 無縫循環 */
+        }
+        .ticket-barcode { 
+            height: 15px; 
+            margin-top: 15px; 
+            opacity: 0.5; 
+            mix-blend-mode: screen;
+            /* 條碼紋理 */
+            background: repeating-linear-gradient(90deg, var(--tech-cyan), var(--tech-cyan) 2px, transparent 2px, transparent 6px);
+            /* 套用動畫 */
+            animation: barcode-move 3s linear infinite;
+        }
 
         /* Weather Card */
         .weather-card-dynamic {
@@ -284,7 +303,7 @@
             <div class="click-hint"><i class="fa-solid fa-up-right-from-square"></i> 點擊前往 tenki.jp 查詢詳細天氣</div>
         </div>
 
-        <div id="boarding-pass-container" class="tech-ticket-container">
+        <div id="boarding-pass-container" class="tech-ticket-container" onclick="openTigerair()">
             <div class="tech-ticket">
                 <div class="ticket-header">
                     <span><i class="fa-solid fa-plane-departure"></i> BOARDING PASS</span>
@@ -318,7 +337,7 @@
             </div>
         </div>
 
-        <div id="return-pass-container" class="tech-ticket-container">
+        <div id="return-pass-container" class="tech-ticket-container" onclick="openTigerair()">
             <div class="tech-ticket">
                 <div class="ticket-header">
                     <span><i class="fa-solid fa-plane-departure"></i> BOARDING PASS</span>
@@ -655,6 +674,7 @@
     }
 
     function openTenki() { window.open('https://tenki.jp/', '_blank'); }
+    function openTigerair() { window.open('https://apps.apple.com/tw/app/tigerair-taiwan/id1256886867', '_blank'); }
     function getWeatherDesc(code) { if(code <= 3) return '晴朗'; if(code <= 48) return '多雲'; if(code <= 67) return '有雨'; if(code <= 82) return '陣雨'; if(code >= 95) return '雷雨'; return '降雪'; }
 
     // --- Helper for Duration ---
