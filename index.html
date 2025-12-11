@@ -25,18 +25,24 @@
             --primary: #2F3E46; --accent: #A63744; --text-main: #2b2b2b; --text-sub: #666;
             --glass-bg: rgba(255, 255, 255, 0.9); --glass-border: 1px solid rgba(255, 255, 255, 0.6);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            /* 天氣顏色 */
             --sun-color: #FFD700; --cloud-color: #90A4AE; --rain-color: #4FC3F7; --snow-color: #B3E5FC; --storm-color: #546E7A;
+            --tech-cyan: #54dcff;
         }
 
         /* 強制統一字體 */
-        body, button, input, textarea, select, .t-time, .wc-temp, .fin-total, .d-date, .d-day, .wc-time-display {
+        body, button, input, textarea, select, 
+        .t-time, .wc-temp, .fin-total, .d-date, .d-day, .wc-time-display, .airport-code, .tech-time, .flight-no {
             font-family: 'Shippori Mincho', 'Noto Serif TC', serif !important;
         }
 
         body {
             color: var(--text-main); padding-bottom: 100px;
-            background-image: url('IMG_2278.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;
+            /* 固定背景圖 */
+            background-image: url('IMG_2278.jpeg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            min-height: 100vh;
         }
 
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.25); z-index: -1; pointer-events: none; }
@@ -46,8 +52,13 @@
             background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
             position: relative; z-index: 1000; width: 100%;
         }
-        .header-title h1 { margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; }
-        .settings-btn { font-size: 1.2rem; color: var(--primary); cursor: pointer; padding: 5px; }
+        /* 標題防爆 */
+        .header-title { flex: 1; min-width: 0; margin-right: 15px; }
+        .header-title h1 { 
+            margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .settings-btn { font-size: 1.4rem; color: var(--primary); cursor: pointer; padding: 5px; flex: 0 0 auto;}
 
         .date-scroller-wrapper { display: flex; justify-content: center; width: 100%; }
         .date-scroller { display: flex; overflow-x: auto; padding: 10px 25px; gap: 12px; scrollbar-width: none; justify-content: flex-start; width: 100%; }
@@ -75,6 +86,47 @@
             border: var(--glass-border); border-radius: 12px; padding: 20px; margin-bottom: 20px;
             box-shadow: var(--shadow); width: 100%;
         }
+
+        /* --- 精緻版科技機票 --- */
+        .tech-ticket-container { display: none; }
+        .tech-ticket {
+            background: rgba(47, 62, 70, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(84, 220, 255, 0.4);
+            box-shadow: 0 0 15px rgba(84, 220, 255, 0.15), inset 0 0 10px rgba(84, 220, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            position: relative; overflow: hidden; color: #fff;
+        }
+        .tech-ticket::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, rgba(84,220,255,0.03) 1px, transparent 1px), linear-gradient(rgba(84,220,255,0.03) 1px, transparent 1px);
+            background-size: 12px 12px; z-index: 0; pointer-events: none;
+        }
+        .ticket-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--tech-cyan); letter-spacing: 1px; margin-bottom: 10px; position: relative; z-index: 1; opacity: 0.9; }
+        
+        .route-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 1; }
+        .airport-col { flex: 1; }
+        .airport-code { font-size: 2rem; font-weight: 800; color: var(--tech-cyan); text-shadow: 0 0 8px rgba(84,220,255,0.5); line-height: 1;}
+        .airport-name { font-size: 0.75rem; color: #ddd; margin-top: 3px; letter-spacing: 0.5px;}
+        
+        .plane-divider { flex: 0 0 auto; padding: 0 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .flight-no { font-size: 0.85rem; color: var(--tech-cyan); font-weight: bold; margin-bottom: 2px; letter-spacing: 1px; }
+        
+        .plane-divider i { 
+            transform: rotate(0deg) !important;
+            color: #fff; 
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.9)); 
+            font-size: 1.5rem; 
+            display: inline-block;
+            margin-top: 12px;
+            margin-bottom: 5px;
+        }
+
+        .time-row { display: flex; justify-content: space-between; position: relative; z-index: 1; padding-top: 8px; border-top: 1px dashed rgba(84,220,255,0.3); }
+        .tech-time { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .time-label { font-size: 0.65rem; color: var(--tech-cyan); opacity: 0.8; }
 
         /* Weather Card */
         .weather-card-dynamic {
@@ -147,6 +199,8 @@
         .settle-highlight { font-size: 1.5rem; color: var(--accent); font-weight: bold; display: block; text-align: center; margin: 15px 0; background: #fdf0f0; padding: 10px; border-radius: 8px;}
         .personal-stat-row { font-size: 0.9rem; color: #555; display: flex; justify-content: space-between; padding: 4px 0; }
         .personal-stat-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 5px; }
+        
+        /* Bottom Nav (4 items) */
         .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 380px; height: 70px; background: rgba(47, 62, 70, 0.95); backdrop-filter: blur(10px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 900; }
         .nav-item { color: rgba(255,255,255,0.5); font-size: 0.8rem; flex: 1; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;}
         .nav-item.active { color: #fff; transform: translateY(-2px); }
@@ -158,39 +212,34 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { font-size: 0.9rem; color: #888; display: block; margin-bottom: 5px; }
         .form-group input, .form-group textarea { width: 100%; padding: 8px 0; border: none; border-bottom: 1px solid #ddd; font-size: 1.1rem; outline: none; }
+        
+        /* 停留時間選擇器 */
+        .duration-picker-group { display: flex; align-items: center; gap: 10px; }
+        .duration-picker-group select {
+            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.1rem; outline: none; background: white; text-align: center;
+            appearance: none; -webkit-appearance: none;
+        }
+        .duration-picker-group span { font-size: 0.9rem; color: #666; }
+
         .input-group-row { display: flex; gap: 10px; align-items: flex-end; }
         .input-group-row input { flex: 1; }
         .btn-search-test { background: #eee; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 0.9rem; color: #555; white-space: nowrap; }
         .btn-save { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 2px; font-size: 1rem; cursor: pointer; margin-top: 10px; }
         .btn-cancel { width: 100%; padding: 10px; background: none; border: none; color: #999; margin-top: 5px; cursor: pointer; }
         
-        /* 旅伴設定：照片選取樣式 */
+        /* 旅伴設定 */
         .user-setting-row { 
-            display: flex; gap: 15px; margin-bottom: 15px; align-items: center; 
-            background: #f9f9f9; padding: 12px; border-radius: 12px; 
-            border: 1px solid #eee;
+            display: flex; gap: 10px; margin-bottom: 15px; align-items: center; 
+            background: #f9f9f9; padding: 12px; border-radius: 12px; border: 1px solid #eee; 
         }
-        .user-setting-row input[type="text"] { flex: 1; font-size: 1rem; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
+        .user-setting-row input[type="text"] { 
+            flex: 1; font-size: 1rem; padding: 8px; border: 1px solid #ddd; border-radius: 8px; 
+            min-width: 0; 
+        }
         .btn-remove-user { color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 5px; }
-        
-        /* 預覽圖 & 上傳按鈕 */
-        .avatar-wrapper { position: relative; width: 50px; height: 50px; flex: 0 0 auto; cursor: pointer; }
-        .preview-avatar { 
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover; 
-            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-        }
-        .upload-icon-badge {
-            position: absolute; bottom: -2px; right: -2px; 
-            background: var(--primary); color: white; border-radius: 50%; 
-            width: 20px; height: 20px; font-size: 0.6rem; 
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid white;
-        }
-        .btn-upload-text {
-            font-size: 0.8rem; color: #555; background: #eee; 
-            padding: 5px 10px; border-radius: 20px; cursor: pointer;
-            display: flex; align-items: center; gap: 5px;
-        }
+        .avatar-wrapper { position: relative; width: 45px; height: 45px; flex: 0 0 auto; cursor: pointer; }
+        .preview-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .upload-icon-badge { position: absolute; bottom: -2px; right: -2px; background: var(--primary); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
 
         .payer-selector { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
         .payer-opt { flex: 0 0 auto; text-align: center; opacity: 0.5; cursor: pointer; transition: 0.2s; }
@@ -234,6 +283,75 @@
             </div>
             <div class="click-hint"><i class="fa-solid fa-up-right-from-square"></i> 點擊前往 tenki.jp 查詢詳細天氣</div>
         </div>
+
+        <div id="boarding-pass-container" class="tech-ticket-container">
+            <div class="tech-ticket">
+                <div class="ticket-header">
+                    <span><i class="fa-solid fa-plane-departure"></i> BOARDING PASS</span>
+                    <span>2026.01.18 (SUN)</span>
+                </div>
+                <div class="route-row">
+                    <div class="airport-col" style="text-align:left;">
+                        <div class="airport-code">TPE</div>
+                        <div class="airport-name">Taoyuan</div>
+                    </div>
+                    <div class="plane-divider">
+                        <div class="flight-no">IT206</div>
+                        <i class="fa-solid fa-plane-departure"></i>
+                    </div>
+                    <div class="airport-col" style="text-align:right;">
+                        <div class="airport-code">NGO</div>
+                        <div class="airport-name">Nagoya</div>
+                    </div>
+                </div>
+                <div class="time-row">
+                    <div>
+                        <div class="time-label">DEPARTURE</div>
+                        <div class="tech-time">15:10</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="time-label">ARRIVAL</div>
+                        <div class="tech-time">18:50</div>
+                    </div>
+                </div>
+                <div class="ticket-barcode"></div>
+            </div>
+        </div>
+
+        <div id="return-pass-container" class="tech-ticket-container">
+            <div class="tech-ticket">
+                <div class="ticket-header">
+                    <span><i class="fa-solid fa-plane-departure"></i> BOARDING PASS</span>
+                    <span>2026.01.29 (THU)</span>
+                </div>
+                <div class="route-row">
+                    <div class="airport-col" style="text-align:left;">
+                        <div class="airport-code">KMQ</div>
+                        <div class="airport-name">Komatsu</div>
+                    </div>
+                    <div class="plane-divider">
+                        <div class="flight-no">IT253</div>
+                        <i class="fa-solid fa-plane-departure"></i>
+                    </div>
+                    <div class="airport-col" style="text-align:right;">
+                        <div class="airport-code">TPE</div>
+                        <div class="airport-name">Taoyuan</div>
+                    </div>
+                </div>
+                <div class="time-row">
+                    <div>
+                        <div class="time-label">DEPARTURE</div>
+                        <div class="tech-time">16:45</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="time-label">ARRIVAL</div>
+                        <div class="tech-time">19:20</div>
+                    </div>
+                </div>
+                <div class="ticket-barcode"></div>
+            </div>
+        </div>
+
         <div class="section-title">本日行程</div>
         <div id="itinerary-list"></div>
     </div>
@@ -269,7 +387,17 @@
         <input type="hidden" id="edit-mode-idx" value=""> 
         <div class="form-group"><label>時間</label><input type="time" id="inp-time" value="10:00"></div>
         <div class="form-group"><label>地點</label><div class="input-group-row"><input type="text" id="inp-act" placeholder="輸入名稱"><button class="btn-search-test" onclick="searchMapTest()">🔍</button></div></div>
-        <div class="form-group"><label>停留時間</label><input type="text" id="inp-duration" placeholder="例如: 1.5小時"></div>
+        
+        <div class="form-group">
+            <label>停留時間</label>
+            <div class="duration-picker-group">
+                <select id="sel-dur-hour"></select>
+                <span>小時</span>
+                <select id="sel-dur-min"></select>
+                <span>分鐘</span>
+            </div>
+        </div>
+
         <div class="form-group"><label>Map 連結</label><input type="text" id="inp-link" placeholder="選填"></div>
         <div class="form-group"><label>備註</label><textarea id="inp-note" rows="2"></textarea></div>
         <button class="btn-save" onclick="saveItinerary()">儲存</button><button class="btn-cancel" onclick="closeModal('modal-itinerary')">取消</button>
@@ -361,12 +489,15 @@
     let hourlyWeatherData = null; 
 
     function init() {
+        initDurationOptions();
+
         db.ref('tripData').on('value', (snapshot) => {
             const val = snapshot.val();
             if (val) {
                 users = val.users || JSON.parse(JSON.stringify(DEFAULT_USERS));
                 itinData = val.itinData || {0:[{time:"15:10",activity:"桃園起飛",note:"CI150",link:""}]};
                 expenseData = val.expenseData || {};
+                
                 if (!selectedPayerId && users.length > 0) selectedPayerId = users[0].id;
                 renderDateBar();
                 updateViewContent();
@@ -380,15 +511,35 @@
         
         renderDateBar();
         updateViewContent();
-        
         getLocationAndWeather();
         startRealtimeClock(); 
-        
         fetchExchangeRate();
     }
 
+    // 初始化時間選項
+    function initDurationOptions() {
+        const hourSel = document.getElementById('sel-dur-hour');
+        const minSel = document.getElementById('sel-dur-min');
+        
+        let hHtml = '';
+        for(let i=0; i<=24; i++) {
+            hHtml += `<option value="${i}">${i}</option>`;
+        }
+        hourSel.innerHTML = hHtml;
+
+        let mHtml = '';
+        for(let i=0; i<60; i+=5) { // 5分鐘間隔
+            mHtml += `<option value="${i}">${i.toString().padStart(2, '0')}</option>`;
+        }
+        minSel.innerHTML = mHtml;
+    }
+
     function saveToFirebase() {
-        db.ref('tripData').set({ users: users, itinData: itinData, expenseData: expenseData });
+        db.ref('tripData').set({ 
+            users: users, 
+            itinData: itinData, 
+            expenseData: expenseData
+        });
     }
 
     function switchView(view) {
@@ -414,6 +565,18 @@
     function updateViewContent() {
         if(currentView === 'itinerary') renderItineraryList(currentDayIndex);
         else if(currentView === 'accounting') renderAccountingView(currentDayIndex);
+
+        // 控制機票顯示：Day 1 顯示去程，Day 12 顯示回程
+        const depPass = document.getElementById('boarding-pass-container');
+        const retPass = document.getElementById('return-pass-container');
+        
+        depPass.style.display = 'none';
+        retPass.style.display = 'none';
+
+        if (currentView === 'itinerary') {
+            if (currentDayIndex === 0) depPass.style.display = 'block';
+            if (currentDayIndex === 11) retPass.style.display = 'block';
+        }
     }
 
     function renderDateBar() {
@@ -423,7 +586,11 @@
             d.setDate(TRIP_START_DATE.getDate() + i);
             let el = document.createElement('div');
             el.className = `date-card ${i===currentDayIndex?'active':''}`;
-            el.onclick = () => { currentDayIndex = i; renderDateBar(); updateViewContent(); };
+            el.onclick = () => { 
+                currentDayIndex = i; 
+                renderDateBar(); 
+                updateViewContent(); 
+            };
             el.innerHTML = `<div class="d-day">DAY ${i+1}</div><div class="d-date">${d.getDate()}</div>`;
             s.appendChild(el);
         }
@@ -443,57 +610,39 @@
         document.getElementById('wc-realtime-time').innerText = timeStr;
     }
     
-    // 地址抓取 (並行處理)
+    // 地址抓取
     async function fetchLocationName(lat, lon) {
         try { 
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=zh-TW`; 
-            const res = await fetch(url); 
-            const data = await res.json(); 
+            const res = await fetch(url); const data = await res.json(); 
             const city = data.address.city || data.address.county || ""; 
             const district = data.address.suburb || data.address.town || data.address.district || ""; 
             if (city || district) document.getElementById('weather-loc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${city} ${district}`; 
-        } catch (e) {
-            console.error("Address lookup failed", e);
-        }
+        } catch (e) { console.error(e); }
     }
 
     async function fetchWeather(lat, lon) {
         try { 
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`); 
             const data = await res.json();
-            
             document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-dot"></i> 目前位置';
             document.getElementById('wc-temp').innerText = `${Math.round(data.current_weather.temperature)}°`;
-            
             const code = data.current_weather.weathercode;
             const iconContainer = document.getElementById('wc-icon-container');
-            
-            if(code <= 3) {
-                iconContainer.innerHTML = '<i class="fa-solid fa-sun anim-sun"></i>';
-            } else if (code <= 48) {
-                iconContainer.innerHTML = '<i class="fa-solid fa-cloud anim-cloud"></i>';
-            } else if (code <= 67) {
-                iconContainer.innerHTML = '<i class="fa-solid fa-cloud-rain anim-rain"></i>';
-            } else if (code <= 82) {
-                iconContainer.innerHTML = '<i class="fa-solid fa-cloud-showers-heavy anim-rain"></i>';
-            } else if (code >= 95) {
-                iconContainer.innerHTML = '<i class="fa-solid fa-cloud-bolt anim-storm"></i>';
-            } else {
-                iconContainer.innerHTML = '<i class="fa-regular fa-snowflake anim-snow"></i>';
-            }
+            if(code <= 3) iconContainer.innerHTML = '<i class="fa-solid fa-sun anim-sun"></i>';
+            else if (code <= 48) iconContainer.innerHTML = '<i class="fa-solid fa-cloud anim-cloud"></i>';
+            else if (code <= 67) iconContainer.innerHTML = '<i class="fa-solid fa-cloud-rain anim-rain"></i>';
+            else if (code <= 82) iconContainer.innerHTML = '<i class="fa-solid fa-cloud-showers-heavy anim-rain"></i>';
+            else if (code >= 95) iconContainer.innerHTML = '<i class="fa-solid fa-cloud-bolt anim-storm"></i>';
+            else iconContainer.innerHTML = '<i class="fa-regular fa-snowflake anim-snow"></i>';
             document.getElementById('wc-desc').innerText = getWeatherDesc(code);
-        } catch(e){
-             console.error(e);
-        }
+        } catch(e){ console.error(e); }
     }
 
     function getLocationAndWeather() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                p => {
-                    fetchWeather(p.coords.latitude, p.coords.longitude);
-                    fetchLocationName(p.coords.latitude, p.coords.longitude);
-                },
+                p => { fetchWeather(p.coords.latitude, p.coords.longitude); fetchLocationName(p.coords.latitude, p.coords.longitude); },
                 (e) => { 
                     document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-slash"></i> 無法定位';
                     document.getElementById('wc-temp').innerText = "--°";
@@ -502,22 +651,38 @@
                 },
                 { timeout: 5000, enableHighAccuracy: false } 
             );
-        } else {
-            document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-ban"></i> 不支援定位';
-        }
+        } else { document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-ban"></i> 不支援定位'; }
     }
 
-    function openTenki() {
-        window.open('https://tenki.jp/', '_blank');
+    function openTenki() { window.open('https://tenki.jp/', '_blank'); }
+    function getWeatherDesc(code) { if(code <= 3) return '晴朗'; if(code <= 48) return '多雲'; if(code <= 67) return '有雨'; if(code <= 82) return '陣雨'; if(code >= 95) return '雷雨'; return '降雪'; }
+
+    // --- Helper for Duration ---
+    function minsToParts(mins) {
+        if (!mins && mins !== 0) return {h:1, m:0}; // 預設 1 小時
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return {h, m};
     }
 
-    function getWeatherDesc(code) {
-        if(code <= 3) return '晴朗';
-        if(code <= 48) return '多雲';
-        if(code <= 67) return '有雨';
-        if(code <= 82) return '陣雨';
-        if(code >= 95) return '雷雨';
-        return '降雪';
+    function formatDuration(mins) {
+        if (!mins || isNaN(mins)) return "";
+        let h = Math.floor(mins / 60);
+        let m = mins % 60;
+        if (h > 0 && m > 0) return `${h}小時 ${m}分`;
+        if (h > 0) return `${h}小時`;
+        return `${m}分鐘`;
+    }
+
+    function addMinutes(timeStr, minutesToAdd) {
+        if (!timeStr) return "09:00";
+        let [h, m] = timeStr.split(':').map(Number);
+        let date = new Date();
+        date.setHours(h);
+        date.setMinutes(m + minutesToAdd);
+        let newH = date.getHours().toString().padStart(2, '0');
+        let newM = date.getMinutes().toString().padStart(2, '0');
+        return `${newH}:${newM}`;
     }
 
     // --- 行程 ---
@@ -526,6 +691,7 @@
         let items = itinData[dayIdx] || [];
         container.innerHTML = items.length ? items.map((item, idx) => {
             const mapUrl = item.link ? item.link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.activity)}`;
+            const durDisplay = formatDuration(item.duration);
             return `
             <div class="timeline-item" data-index="${idx}">
                 <div class="t-time">${item.time}<div class="t-handle" style="display:inline-block; margin-left:5px; opacity:0.8;"><i class="fa-solid fa-grip-lines"></i></div></div>
@@ -535,7 +701,7 @@
                         <button class="icon-btn del" onclick="deleteItin(${dayIdx}, ${idx})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <div class="t-act">${item.activity}</div>
-                    ${item.duration ? `<div class="t-duration"><i class="fa-regular fa-clock"></i> ${item.duration}</div>` : ''}
+                    ${durDisplay ? `<div class="t-duration"><i class="fa-regular fa-clock"></i> ${durDisplay}</div>` : ''}
                     ${item.note ? `<div class="t-note">${item.note}</div>` : ''}
                     <a href="${mapUrl}" target="_blank" class="btn-map-jump"><i class="fa-solid fa-location-arrow"></i> 導航</a>
                 </div>
@@ -562,7 +728,13 @@
         document.getElementById('edit-mode-idx').value = idx; 
         document.getElementById('inp-time').value = item.time;
         document.getElementById('inp-act').value = item.activity;
-        document.getElementById('inp-duration').value = item.duration || "";
+        
+        // 設定雙選單值
+        const durMins = parseInt(item.duration) || 0;
+        const parts = minsToParts(durMins);
+        document.getElementById('sel-dur-hour').value = parts.h;
+        document.getElementById('sel-dur-min').value = parts.m;
+        
         document.getElementById('inp-link').value = item.link || ""; 
         document.getElementById('inp-note').value = item.note || "";
         document.getElementById('modal-itinerary').style.display = 'flex';
@@ -573,11 +745,16 @@
         const act = document.getElementById('inp-act').value;
         const note = document.getElementById('inp-note').value;
         const link = document.getElementById('inp-link').value;
-        const dur = document.getElementById('inp-duration').value;
+        
+        // 讀取雙選單並計算總分鐘
+        const h = parseInt(document.getElementById('sel-dur-hour').value) || 0;
+        const m = parseInt(document.getElementById('sel-dur-min').value) || 0;
+        const durMins = h * 60 + m;
+        
         const editIdx = document.getElementById('edit-mode-idx').value;
         if(!act) return;
         if(!itinData[currentDayIndex]) itinData[currentDayIndex] = [];
-        const newItem = { time, activity: act, note, link, duration: dur };
+        const newItem = { time, activity: act, note, link, duration: durMins };
         if(editIdx !== "") itinData[currentDayIndex][parseInt(editIdx)] = newItem;
         else itinData[currentDayIndex].push(newItem);
         saveToFirebase();
@@ -701,22 +878,6 @@
         document.getElementById('settle-content').innerHTML = content;
     }
 
-    function renderPayerSelector() { document.getElementById('payer-selector').innerHTML = users.map(u => `<div class="payer-opt ${selectedPayerId === u.id ? 'selected' : ''}" onclick="selectPayer('${u.id}')"><img src="${u.avatar}"><div style="font-size:0.7rem;">${u.name}</div></div>`).join(''); }
-    function selectPayer(id) { selectedPayerId = id; renderPayerSelector(); }
-    function setCurrency(c) { currentCurrency = c; document.getElementById('curr-jpy').className = c==='JPY'?'curr-opt selected':'curr-opt'; document.getElementById('curr-twd').className = c==='TWD'?'curr-opt selected':'curr-opt'; }
-
-    function saveExpense() {
-        const amt = document.getElementById('inp-amount').value;
-        const item = document.getElementById('inp-item').value;
-        const isPersonal = document.getElementById('inp-personal').checked;
-        if(!amt || !item) return;
-        if(!expenseData[currentDayIndex]) expenseData[currentDayIndex] = [];
-        expenseData[currentDayIndex].push({ amount: amt, item: item, payer: selectedPayerId, curr: currentCurrency, isPersonal: isPersonal });
-        saveToFirebase();
-        closeModal('modal-accounting');
-    }
-    function deleteExpense(d, i){ if(confirm('刪除?')){ expenseData[d].splice(i,1); saveToFirebase(); }}
-
     // --- Settings with Image Upload & Compression ---
     function openSettings(){ 
         document.getElementById('settings-user-list').innerHTML = users.map((u, i) => `
@@ -731,26 +892,26 @@
                 ${users.length > 1 ? `<i class="fa-solid fa-circle-minus btn-remove-user" onclick="removeUserField(${i})"></i>` : ''}
             </div>
         `).join(''); 
+
         document.getElementById('modal-settings').style.display='flex'; 
     }
 
     function handleFileSelect(input, index) {
         if (input.files && input.files[0]) {
-            processAvatar(input.files[0], (base64) => {
+            processImage(input.files[0], 150, (base64) => {
                 document.getElementById(`prev-img-${index}`).src = base64;
                 document.getElementById(`set-ava-${index}`).value = base64;
             });
         }
     }
 
-    function processAvatar(file, callback) {
+    function processImage(file, maxSize, callback) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const maxSize = 150; // 壓縮至 150px
                 let width = img.width;
                 let height = img.height;
                 if (width > height) {
@@ -761,7 +922,7 @@
                 canvas.width = width;
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
-                callback(canvas.toDataURL('image/jpeg', 0.8)); // 轉成 Base64
+                callback(canvas.toDataURL('image/jpeg', 0.7)); 
             };
             img.src = e.target.result;
         };
@@ -787,7 +948,6 @@
         const rows = document.getElementById('settings-user-list').children;
         let res = [];
         for(let i=0; i<rows.length; i++) {
-            // 從 DOM 讀取最新的值 (包含可能剛上傳的 Base64)
             const name = document.getElementById(`set-name-${i}`).value;
             const avatar = document.getElementById(`set-ava-${i}`).value;
             const id = (users[i] ? users[i].id : 'u'+Date.now()+i);
@@ -805,8 +965,41 @@
     }
 
     function openAddModal() {
-        if(currentView==='itinerary'){ document.getElementById('modal-itin-title').innerText="新增行程"; document.getElementById('edit-mode-idx').value=""; document.getElementById('inp-time').value="10:00"; document.getElementById('inp-act').value=""; document.getElementById('inp-link').value=""; document.getElementById('inp-note').value=""; document.getElementById('inp-duration').value=""; document.getElementById('modal-itinerary').style.display='flex'; } 
-        else { renderPayerSelector(); document.getElementById('inp-amount').value=''; document.getElementById('inp-item').value=''; document.getElementById('inp-personal').checked = false; setCurrency('JPY'); document.getElementById('modal-accounting').style.display='flex'; }
+        if(currentView==='itinerary'){ 
+            document.getElementById('modal-itin-title').innerText="新增行程"; 
+            document.getElementById('edit-mode-idx').value=""; 
+            
+            // 智慧時間推算
+            let nextTime = "09:00"; 
+            const currentList = itinData[currentDayIndex] || [];
+            if (currentList.length > 0) {
+                const lastItem = currentList[currentList.length - 1];
+                const lastTime = lastItem.time;
+                // 注意：duration 現在存的是分鐘數
+                const dur = parseInt(lastItem.duration) || 60; 
+                if (lastTime) {
+                    nextTime = addMinutes(lastTime, dur); 
+                }
+            }
+            document.getElementById('inp-time').value = nextTime;
+
+            document.getElementById('inp-act').value=""; 
+            document.getElementById('inp-link').value=""; 
+            document.getElementById('inp-note').value=""; 
+            
+            // 重置雙選單 (預設1小時)
+            document.getElementById('sel-dur-hour').value = 1;
+            document.getElementById('sel-dur-min').value = 0;
+            
+            document.getElementById('modal-itinerary').style.display='flex'; 
+        } else { 
+            renderPayerSelector(); 
+            document.getElementById('inp-amount').value=''; 
+            document.getElementById('inp-item').value=''; 
+            document.getElementById('inp-personal').checked = false; 
+            setCurrency('JPY'); 
+            document.getElementById('modal-accounting').style.display='flex'; 
+        }
     }
     function closeModal(id){document.getElementById(id).style.display='none';}
 
