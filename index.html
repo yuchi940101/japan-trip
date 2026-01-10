@@ -12,7 +12,7 @@
     <link rel="icon" type="image/jpeg" href="IMG_2278.jpeg">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=Noto+Serif+TC:wght@400;600&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -24,16 +24,32 @@
         html, body { width: 100%; max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
         
         :root {
-            --primary: #2F3E46; --accent: #A63744; --text-main: #2b2b2b; --text-sub: #666;
-            --glass-bg: rgba(255, 255, 255, 0.9); --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            /* --- 日本傳統色配色 --- */
+            /* 勝色 (Kachi-iro) - 深藍黑 */
+            --primary: #181B26; 
+            /* 茜色 (Akane-iro) - 暗紅 */
+            --accent: #B7282E; 
+            
+            --text-main: #333333; 
+            --text-sub: #727171;
+            
+            /* 玻璃質感優化 */
+            --glass-bg: rgba(255, 255, 255, 0.85); 
+            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+            
             --sun-color: #FFD700; --cloud-color: #90A4AE; --rain-color: #4FC3F7; --snow-color: #B3E5FC; --storm-color: #546E7A;
-            --tech-cyan: #54dcff;
+            --tech-cyan: #007EA7; 
         }
 
-        body, button, input, textarea, select, 
-        .t-time, .wc-temp, .fin-total, .d-date, .d-day, .wc-time-display, .airport-code, .tech-time, .flight-no {
+        body, button, input, textarea, select {
             font-family: 'Shippori Mincho', 'Noto Serif TC', serif !important;
+        }
+        
+        /* 數字字體優化 */
+        .t-time, .wc-temp, .fin-total, .d-date, .wc-time-display, .airport-code, .tech-time, .flight-no, .pass-label, .date-info {
+            font-family: 'Montserrat', sans-serif !important;
+            letter-spacing: 0.5px;
         }
 
         body {
@@ -43,7 +59,23 @@
             min-height: 100vh;
         }
 
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.25); z-index: -1; pointer-events: none; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.1); z-index: -1; pointer-events: none; }
+
+        /* --- 飄雪特效 --- */
+        .snow-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
+            background-image: 
+                radial-gradient(4px 4px at 10% 20%, rgba(255,255,255,0.8) 50%, transparent),
+                radial-gradient(3px 3px at 30% 60%, rgba(255,255,255,0.6) 50%, transparent),
+                radial-gradient(2px 2px at 70% 40%, rgba(255,255,255,0.5) 50%, transparent);
+            background-size: 300px 300px;
+            animation: snow 10s linear infinite;
+            opacity: 0.7;
+        }
+        @keyframes snow {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 0 300px, 0 200px, 0 100px; }
+        }
 
         header {
             padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: flex-end;
@@ -52,12 +84,12 @@
         }
         .header-title { flex: 1; min-width: 0; margin-right: 15px; }
         .header-title h1 { 
-            margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 5px white; 
+            margin: 0; font-size: 1.6rem; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 10px rgba(255,255,255,0.8); 
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .settings-btn { font-size: 1.4rem; color: var(--primary); cursor: pointer; padding: 5px; flex: 0 0 auto;}
 
-        .date-scroller-wrapper { display: flex; justify-content: center; width: 100%; }
+        .date-scroller-wrapper { display: flex; justify-content: center; width: 100%; position: relative; z-index: 10; }
         .date-scroller { display: flex; overflow-x: auto; padding: 10px 25px; gap: 12px; scrollbar-width: none; justify-content: flex-start; width: 100%; scroll-behavior: smooth; }
         @media (min-width: 600px) { .date-scroller { justify-content: center; } }
         .date-scroller::-webkit-scrollbar { display: none; }
@@ -68,90 +100,142 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: var(--shadow); color: var(--text-sub); transition: 0.3s;
         }
-        .date-card.active { background: var(--primary); color: white; transform: translateY(-3px); border-color: var(--primary); }
-        .d-day { font-size: 0.6rem; }
-        .d-date { font-size: 1.2rem; font-weight: 600; }
+        .date-card.active { background: var(--primary); color: white; transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 5px 15px rgba(24, 27, 38, 0.3); }
+        .d-day { font-size: 0.6rem; letter-spacing: 1px; }
+        .d-date { font-size: 1.3rem; font-weight: 700; }
 
-        .container { padding: 10px 20px; width: 100%; max-width: 600px; margin: 0 auto; min-height: 60vh; }
+        .container { padding: 10px 20px; width: 100%; max-width: 600px; margin: 0 auto; min-height: 60vh; position: relative; z-index: 5; }
         .view-section { display: none; width: 100%; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card-base {
             background: var(--glass-bg); backdrop-filter: blur(12px);
-            border: var(--glass-border); border-radius: 12px; padding: 20px; margin-bottom: 20px;
+            border: var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 20px;
             box-shadow: var(--shadow); width: 100%;
         }
 
-        /* Animations */
-        .anim-fade-out-left { animation: slideOutLeft 0.2s forwards; }
-        .anim-fade-in-right { animation: slideInRight 0.2s forwards; }
-        .anim-fade-out-right { animation: slideOutRight 0.2s forwards; }
-        .anim-fade-in-left { animation: slideInLeft 0.2s forwards; }
-        @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-30px); opacity: 0; } }
-        @keyframes slideInRight { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(30px); opacity: 0; } }
-        @keyframes slideInLeft { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* --- 垂直時間軸設計 --- */
+        .timeline-item { 
+            position: relative; 
+            padding-left: 20px; 
+            border-left: 2px solid rgba(24, 27, 38, 0.15); 
+            margin-left: 10px; 
+            margin-bottom: 25px; 
+            display: flex; flex-direction: column; 
+            touch-action: manipulation;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -6px; top: 8px;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--accent); border: 2px solid #fff;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2); z-index: 1;
+        }
 
-        /* Tech Ticket */
-        .tech-ticket-container { display: none; }
-        .tech-ticket {
-            background: rgba(47, 62, 70, 0.85); backdrop-filter: blur(15px);
-            border: 1px solid rgba(84, 220, 255, 0.4);
-            box-shadow: 0 0 15px rgba(84, 220, 255, 0.15), inset 0 0 10px rgba(84, 220, 255, 0.1);
-            border-radius: 12px; padding: 15px 20px; margin-bottom: 20px;
-            position: relative; overflow: hidden; color: #fff; cursor: pointer; transition: transform 0.2s;
+        .t-time { 
+            font-size: 1rem; color: var(--primary); font-weight: 700; 
+            margin-bottom: 5px; display: flex; align-items: center; gap: 10px; 
+            padding-left: 5px;
         }
-        .tech-ticket:active { transform: scale(0.98); }
-        .tech-ticket::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, rgba(84,220,255,0.03) 1px, transparent 1px), linear-gradient(rgba(84,220,255,0.03) 1px, transparent 1px);
-            background-size: 12px 12px; z-index: 0; pointer-events: none;
+        .t-content { 
+            flex: 1; width: 100%; 
+            background: rgba(255,255,255,0.9); 
+            padding: 15px 20px; border-radius: 12px; 
+            box-shadow: var(--shadow); position: relative; min-width: 0; 
+            border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); 
         }
-        .ticket-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--tech-cyan); letter-spacing: 1px; margin-bottom: 10px; position: relative; z-index: 1; opacity: 0.9; }
-        .route-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 1; }
-        .airport-col { flex: 1; }
-        .airport-code { font-size: 2rem; font-weight: 800; color: var(--tech-cyan); text-shadow: 0 0 8px rgba(84,220,255,0.5); line-height: 1;}
-        .airport-name { font-size: 0.75rem; color: #ddd; margin-top: 3px; letter-spacing: 0.5px;}
-        .plane-divider { flex: 0 0 auto; padding: 0 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .flight-no { font-size: 0.75rem; color: var(--tech-cyan); font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
-        .plane-divider i { transform: rotate(0deg) !important; color: #fff; filter: drop-shadow(0 0 5px rgba(255,255,255,0.9)); font-size: 1.6rem; display: inline-block; }
-        .time-row { display: flex; justify-content: space-between; position: relative; z-index: 1; padding-top: 8px; border-top: 1px dashed rgba(84,220,255,0.3); }
-        .tech-time { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
-        .time-label { font-size: 0.65rem; color: var(--tech-cyan); opacity: 0.8; }
-        .ticket-barcode { height: 15px; margin-top: 15px; opacity: 0.5; mix-blend-mode: screen; background: repeating-linear-gradient(90deg, var(--tech-cyan), var(--tech-cyan) 2px, transparent 2px, transparent 6px); }
+        .t-act { font-size: 1.2rem; font-weight: 600; color: var(--primary); margin-bottom: 5px; padding-right: 60px; word-wrap: break-word; }
+        .t-note { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 10px; word-wrap: break-word; line-height: 1.5; }
+        
+        .btn-group-right { position: absolute; top: 15px; right: 15px; display: flex; gap: 12px; }
+        .icon-btn { color: #ccc; background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 0; transition: 0.2s; }
+        .icon-btn.edit:hover { color: var(--primary); }
+        .icon-btn.del:hover { color: var(--accent); }
+        
+        /* 統一高度設定 (28px) */
+        .t-duration, .btn-map-jump {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 28px;
+            padding: 0 12px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            line-height: 1; 
+            font-family: 'Montserrat', sans-serif !important;
+            vertical-align: middle;
+            box-sizing: border-box;
+            margin: 5px 0 0 0;
+        }
+        
+        /* 修改處：時間標籤改為「日系低調灰」
+           Background: 淺灰 (#F0F0F0)
+           Text: 深灰 (#666)
+           Border: 淡灰 (#DDD)
+        */
+        .t-duration {
+            background: #F0F0F0;
+            color: #666; 
+            border: 1px solid #DDD;
+            margin-left: 8px;
+        }
+
+        /* 導航按鈕樣式 */
+        .btn-map-jump { 
+            text-decoration: none; 
+            color: var(--tech-cyan); 
+            border: 1px solid var(--tech-cyan); 
+            font-weight: 600;
+            background: transparent;
+            transition: 0.2s;
+        }
+        .btn-map-jump:active { background: var(--tech-cyan); color: white; }
+        .btn-map-jump i { margin-right: 5px; font-size: 0.8rem; }
 
         /* Weather Card */
         .weather-card-dynamic { padding: 15px 20px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.2s; margin-bottom: 15px !important;}
         .weather-card-dynamic:active { transform: scale(0.98); }
-        .weather-card-dynamic::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-            opacity: 0.3; animation: pulse-bg 4s infinite linear; pointer-events: none;
-        }
-        @keyframes pulse-bg { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(0.9); } }
         .weather-info-row { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; }
-        .wc-date-display { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-bottom: 2px; }
+        .wc-date-display { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-bottom: 2px; letter-spacing: 1px;}
         .wc-time-display { font-size: 0.8rem; color: #555; margin-bottom: 5px; letter-spacing: 1px;}
-        .wc-temp { font-size: 2.2rem; color: var(--primary); line-height: 1; font-weight: bold; }
+        .wc-temp { font-size: 2.5rem; color: var(--primary); line-height: 1; font-weight: 700; }
         .wc-loc { font-size: 0.9rem; letter-spacing: 1px; color: var(--text-sub); display: flex; align-items: center; gap: 5px;}
-        
         .click-hint { font-size: 0.65rem; color: #999; text-align: center; margin-top: 15px; opacity: 0.7; border-top: 1px dashed #ddd; padding-top: 10px;}
         
-        /* Larger Icons & No Text */
+        /* Icons */
         @keyframes spin-glow { 0% { transform: rotate(0deg); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6)); } 50% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9)); } 100% { transform: rotate(360deg); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6)); } }
         .anim-sun { color: var(--sun-color); font-size: 3rem; animation: spin-glow 12s linear infinite; display: inline-block; margin-bottom: 5px; }
         @keyframes float-cloud { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         .anim-cloud { color: var(--cloud-color); font-size: 3rem; animation: float-cloud 3s ease-in-out infinite; display: inline-block; margin-bottom: 5px; }
-        @keyframes rain-shake { 0%, 100% { transform: translateX(0); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
-        .anim-rain { color: var(--rain-color); font-size: 3rem; animation: rain-shake 1.5s ease-in-out infinite; display: inline-block; margin-bottom: 5px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
+        .anim-rain { color: var(--rain-color); font-size: 3rem; display: inline-block; margin-bottom: 5px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
         @keyframes snow-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
         .anim-snow { color: var(--snow-color); font-size: 3rem; animation: snow-spin 6s linear infinite; display: inline-block; margin-bottom: 5px; filter: drop-shadow(0 0 5px rgba(179, 229, 252, 0.8)); }
-        @keyframes storm-flash { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 0 transparent); } 50% { opacity: 0.8; filter: drop-shadow(0 0 10px #FFEB3B); } }
-        .anim-storm { color: var(--storm-color); font-size: 3rem; animation: storm-flash 2s infinite; display: inline-block; margin-bottom: 5px; }
+        .anim-storm { color: var(--storm-color); font-size: 3rem; display: inline-block; margin-bottom: 5px; }
         .anim-default { color: #ccc; font-size: 3rem; margin-bottom: 5px; }
 
-        /* Map Links in Modal - Updated to 3 Rows (Flex Column) */
+        /* Tech Ticket */
+        .tech-ticket-container { display: none; }
+        .tech-ticket {
+            background: rgba(24, 27, 38, 0.9); backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 126, 167, 0.4);
+            box-shadow: 0 0 15px rgba(0, 126, 167, 0.15);
+            border-radius: 12px; padding: 15px 20px; margin-bottom: 20px;
+            position: relative; overflow: hidden; color: #fff; cursor: pointer; transition: transform 0.2s;
+        }
+        .tech-ticket:active { transform: scale(0.98); }
+        .ticket-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--tech-cyan); letter-spacing: 1px; margin-bottom: 10px; position: relative; z-index: 1; opacity: 0.9; }
+        .route-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 1; }
+        .airport-col { flex: 1; }
+        .airport-code { font-size: 2rem; font-weight: 800; color: var(--tech-cyan); text-shadow: 0 0 8px rgba(0, 126, 167, 0.5); line-height: 1;}
+        .airport-name { font-size: 0.75rem; color: #ddd; margin-top: 3px; letter-spacing: 0.5px;}
+        .plane-divider { flex: 0 0 auto; padding: 0 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .flight-no { font-size: 0.75rem; color: var(--tech-cyan); font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
+        .plane-divider i { transform: rotate(0deg) !important; color: #fff; filter: drop-shadow(0 0 5px rgba(255,255,255,0.9)); font-size: 1.6rem; display: inline-block; }
+        .time-row { display: flex; justify-content: space-between; position: relative; z-index: 1; padding-top: 8px; border-top: 1px dashed rgba(0, 126, 167, 0.3); }
+        .tech-time { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .time-label { font-size: 0.65rem; color: var(--tech-cyan); opacity: 0.8; }
+        
+        /* Map Links */
         .map-link-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
         .map-btn { 
             display: flex; flex-direction: row; align-items: center; justify-content: flex-start;
@@ -165,25 +249,15 @@
             color: var(--primary); width: 30px; text-align: center;
         }
 
-        /* Itinerary - Updated Title Style (No Line) */
         .section-title { 
             text-align: center; margin: 25px 0 15px; font-size: 1rem; letter-spacing: 3px; 
-            color: var(--primary); width: 100%; font-weight: bold; 
+            color: var(--primary); width: 100%; font-weight: bold; position: relative;
+        }
+        .section-title::after {
+            content: ''; display: block; width: 30px; height: 2px; background: var(--accent); margin: 5px auto 0;
         }
         
-        .timeline-item { display: flex; flex-direction: column; margin-bottom: 25px; position: relative; touch-action: manipulation; width: 100%; }
-        .t-time { font-size: 1.2rem; color: #ffffff; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin-bottom: 8px; margin-left: 5px; display: flex; align-items: center; gap: 10px; }
-        .t-content { flex: 1; width: 100%; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); position: relative; min-width: 0; border: var(--glass-border); backdrop-filter: blur(10px); }
-        .t-act { font-size: 1.3rem; font-weight: 600; color: var(--primary); margin-bottom: 5px; padding-right: 60px; word-wrap: break-word; word-break: break-word; }
-        .t-note { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 10px; word-wrap: break-word; }
-        .t-duration { font-size: 0.9rem; color: var(--accent); background: rgba(166, 55, 68, 0.1); display: inline-block; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; margin-bottom: 0; }
-        .btn-group-right { position: absolute; top: 15px; right: 15px; display: flex; gap: 12px; }
-        .icon-btn { color: #ccc; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0; }
-        .icon-btn.edit:hover { color: var(--primary); }
-        .icon-btn.del:hover { color: var(--accent); }
-        .btn-map-jump { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: var(--primary); border: 1px solid var(--primary); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; transition: 0.2s; margin-top: 5px; vertical-align: middle; }
-
-        /* Checklist Styles (Users Only Tabs) */
+        /* Checklist */
         .checklist-tabs { display: flex; gap: 10px; margin-bottom: 15px; padding-bottom: 5px; overflow-x: auto; scrollbar-width: none; justify-content: center;}
         .checklist-tabs::-webkit-scrollbar { display: none; }
         .check-tab { 
@@ -191,7 +265,6 @@
         }
         .check-tab.active { background: var(--primary); color: white; font-weight: bold; transform: scale(1.05); }
         .check-tab img { width: 20px; height: 20px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 1px solid white; }
-        
         .checklist-container { display: flex; flex-direction: column; gap: 10px; }
         .checklist-item { 
             display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.8); 
@@ -211,7 +284,7 @@
         .check-add-box input { flex: 1; padding: 12px; border: none; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .check-add-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; }
         
-        /* Accounting & Others */
+        /* Accounting */
         .fin-summary { text-align: center; padding-bottom: 15px; border-bottom: 1px dashed #ccc; margin-bottom: 15px; }
         .fin-total { font-size: 2.2rem; color: var(--primary); font-weight: bold; }
         .user-split-list { display: flex; flex-direction: column; gap: 10px; }
@@ -224,7 +297,7 @@
         .converter-box { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 15px; }
         .conv-col { flex: 1; display: flex; flex-direction: column; gap: 5px; }
         .conv-col span { font-size: 0.9rem; font-weight: bold; color: #555; }
-        .conv-col input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.2rem; text-align: center; background: #fff; box-sizing: border-box;}
+        .conv-col input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.2rem; text-align: center; background: #fff; box-sizing: border-box; font-family: 'Montserrat', sans-serif;}
         .conv-icon { color: var(--accent); font-size: 1.2rem; }
         .rate-info { text-align: center; font-size: 0.9rem; color: #888; margin-top: 15px; }
         .settle-range-picker { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; padding: 10px; background: #f0f0f0; border-radius: 8px; }
@@ -232,24 +305,24 @@
         .settle-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
         .settle-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; display:block; }
         .settle-detail { font-size: 0.95rem; color: #666; margin-bottom: 5px; display: flex; justify-content: space-between; }
-        .settle-highlight { font-size: 1.5rem; color: var(--accent); font-weight: bold; display: block; text-align: center; margin: 15px 0; background: #fdf0f0; padding: 10px; border-radius: 8px;}
+        .settle-highlight { font-size: 1.2rem; color: var(--accent); font-weight: bold; display: block; text-align: center; margin: 15px 0; background: #fdf0f0; padding: 10px; border-radius: 8px;}
         .personal-stat-row { font-size: 0.9rem; color: #555; display: flex; justify-content: space-between; padding: 4px 0; }
         .personal-stat-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 5px; }
         
-        /* Bottom Nav (6 items) */
-        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 450px; height: 70px; background: rgba(47, 62, 70, 0.95); backdrop-filter: blur(10px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 900; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 450px; height: 70px; background: rgba(24, 27, 38, 0.95); backdrop-filter: blur(10px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 900; }
         .nav-item { color: rgba(255,255,255,0.5); font-size: 0.75rem; flex: 1; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;}
         .nav-item.active { color: #fff; transform: translateY(-2px); }
         .nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
         
-        .add-btn-fixed { position: fixed; bottom: 105px; right: 25px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; box-shadow: 0 5px 15px rgba(166, 55, 68, 0.4); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; z-index: 950; cursor: pointer; }
+        .add-btn-fixed { position: fixed; bottom: 105px; right: 25px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; box-shadow: 0 5px 15px rgba(183, 40, 46, 0.4); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; z-index: 950; cursor: pointer; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.6); backdrop-filter: blur(5px); z-index: 2000; align-items: center; justify-content: center; }
         .modal { background: #fff; width: 85%; max-width: 340px; padding: 25px; border-radius: 5px; border: 1px solid #eee; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-height: 85vh; overflow-y: auto; }
         .modal h3 { text-align: center; color: var(--primary); margin-top: 0; letter-spacing: 2px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { font-size: 0.9rem; color: #888; display: block; margin-bottom: 5px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 8px 0; border: none; border-bottom: 1px solid #ddd; font-size: 1.1rem; outline: none; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px 0; border: none; border-bottom: 1px solid #ddd; font-size: 1.1rem; outline: none; background: transparent;}
         .duration-picker-group { display: flex; align-items: center; gap: 10px; }
         .duration-picker-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.1rem; outline: none; background: white; text-align: center; appearance: none; -webkit-appearance: none; }
         .duration-picker-group span { font-size: 0.9rem; color: #666; }
@@ -279,7 +352,7 @@
 
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(47, 62, 70, 0.9); backdrop-filter: blur(10px);
+            background: rgba(24, 27, 38, 0.9); backdrop-filter: blur(10px);
             z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column;
             padding: 20px;
         }
@@ -306,7 +379,7 @@
     </div>
 </div>
 
-<div class="bg-overlay"></div>
+<div class="snow-bg"></div>
 
 <header>
     <div class="header-title"><h1>名古屋・高山・北陸遊</h1></div>
@@ -372,7 +445,6 @@
             </div>
         </div>
 
-        <div class="section-title">本日行程</div>
         <div id="itinerary-list"></div>
     </div>
 
@@ -422,7 +494,7 @@
     <div class="modal">
         <h3 style="margin-bottom:20px;">交通工具</h3>
         <div class="map-link-grid">
-            <a href="jorudan://" class="map-btn">
+            <a href="https://world.jorudan.co.jp/mln/zh-tw/" target="_blank" class="map-btn">
                 <i class="fa-solid fa-train-subway"></i> Japan Transit 
             </a>
             <a href="https://www.nouhibus.co.jp/route_bus/" target="_blank" class="map-btn">
@@ -581,7 +653,6 @@
                 expenseData = val.expenseData || {};
                 checklistData = val.checklistData || [];
                 
-                // --- Data Migration: Fix items with no owner ---
                 let needsMigration = false;
                 checklistData.forEach(item => {
                     if (!item.owner || item.owner === 'shared') {
@@ -629,7 +700,6 @@
 
         checklistData = [];
 
-        // 為每個人都建立一份完整的清單
         users.forEach(u => {
             allEssentials.forEach(t => {
                 checklistData.push({ text: t, checked: false, owner: u.id });
@@ -796,7 +866,7 @@
         try { 
             const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`); 
             const data = await res.json();
-            document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-location-dot"></i> 目前位置';
+            // 3. 修正：移除這裡強制覆蓋文字的程式碼，保留 fetchLocationName 的結果
             document.getElementById('wc-temp').innerText = `${Math.round(data.current_weather.temperature)}°`;
             const code = data.current_weather.weathercode;
             const iconContainer = document.getElementById('wc-icon-container');
@@ -806,7 +876,6 @@
             else if (code <= 82) iconContainer.innerHTML = '<i class="fa-solid fa-cloud-showers-heavy anim-rain"></i>';
             else if (code >= 95) iconContainer.innerHTML = '<i class="fa-solid fa-cloud-bolt anim-storm"></i>';
             else iconContainer.innerHTML = '<i class="fa-regular fa-snowflake anim-snow"></i>';
-            // Removed text description update
         } catch(e){ console.error(e); }
     }
 
@@ -845,7 +914,6 @@
         return `${newH}:${newM}`;
     }
 
-    // --- Itinerary Logic ---
     function renderItineraryList(dayIdx) {
         const container = document.getElementById('itinerary-list');
         let items = itinData[dayIdx] || [];
@@ -855,14 +923,14 @@
             const durDisplay = formatDuration(item.duration);
             return `
             <div class="timeline-item" data-index="${idx}">
-                <div class="t-time">${item.time}<div class="t-handle" style="display:inline-block; margin-left:5px; opacity:0.8;"><i class="fa-solid fa-grip-lines"></i></div></div>
+                <div class="t-time">${item.time}</div>
                 <div class="t-content">
                     <div class="btn-group-right">
                         <button class="icon-btn edit" onclick="editItin(${dayIdx}, ${idx})"><i class="fa-solid fa-pen"></i></button>
                         <button class="icon-btn del" onclick="deleteItin(${dayIdx}, ${idx})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <div class="t-act">${item.activity}</div>
-                    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:5px;">
+                    <div style="display:flex; align-items:center; flex-wrap:wrap; margin-top:5px;">
                         <a href="${mapUrl}" target="_blank" class="btn-map-jump"><i class="fa-solid fa-location-arrow"></i> 導航</a>
                         ${durDisplay ? `<div class="t-duration"><i class="fa-regular fa-clock"></i> ${durDisplay}</div>` : ''}
                     </div>
@@ -921,21 +989,18 @@
     function deleteItin(d, i){ if(confirm('刪除?')){ itinData[d].splice(i,1); saveToFirebase(); }}
     function searchMapTest() { const val = document.getElementById('inp-act').value; if(val) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`, '_blank'); else alert("請先輸入地點名稱"); }
 
-    // --- Checklist Logic (No Shared) ---
     function renderChecklist() {
         const tabContainer = document.getElementById('checklist-tabs');
         const listContainer = document.getElementById('checklist-container');
         
         if (!currentChecklistTab && users.length > 0) currentChecklistTab = users[0].id;
 
-        // Render Tabs (Users Only)
         let tabsHtml = '';
         users.forEach(u => {
             tabsHtml += `<div class="check-tab ${currentChecklistTab === u.id ? 'active' : ''}" onclick="switchChecklistTab('${u.id}')"><img src="${u.avatar}">${u.name}</div>`;
         });
         tabContainer.innerHTML = tabsHtml;
 
-        // Render Items
         const filteredItems = checklistData.filter(item => item.owner === currentChecklistTab);
 
         if(filteredItems.length === 0) {
@@ -985,7 +1050,6 @@
         }
     }
 
-    // --- Accounting Logic ---
     function renderAccountingView(dayIdx) {
         let totalJPY = 0; let paidByStats = {};
         users.forEach(u => paidByStats[u.id] = 0);
