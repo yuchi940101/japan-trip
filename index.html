@@ -36,14 +36,13 @@
             
             --sun-color: #FFD700; --cloud-color: #90A4AE; --rain-color: #4FC3F7; --snow-color: #B3E5FC; --storm-color: #546E7A;
             --tech-cyan: #007EA7; 
-            --jp-paper: #fffbf0; /* 發票紙張色 */
         }
 
         body, button, input, textarea, select {
             font-family: 'Shippori Mincho', 'Noto Serif TC', serif !important;
         }
         
-        .t-time, .wc-temp, .fin-total, .d-date, .wc-time-display, .airport-code, .tech-time, .flight-no, .pass-label, .date-info, .ocr-price, .receipt-date, .receipt-total-amount {
+        .t-time, .wc-temp, .fin-total, .d-date, .wc-time-display, .airport-code, .tech-time, .flight-no, .pass-label, .date-info {
             font-family: 'Montserrat', sans-serif !important;
             letter-spacing: 0.5px;
         }
@@ -104,18 +103,6 @@
         .view-section.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 動畫類 */
-        .anim-fade-out-left { animation: fadeOutLeft 0.2s forwards; }
-        .anim-fade-out-right { animation: fadeOutRight 0.2s forwards; }
-        .anim-fade-in-left { animation: fadeInLeft 0.2s forwards; }
-        .anim-fade-in-right { animation: fadeInRight 0.2s forwards; }
-
-        @keyframes fadeOutLeft { to { opacity: 0; transform: translateX(-20px); } }
-        @keyframes fadeOutRight { to { opacity: 0; transform: translateX(20px); } }
-        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-
         .card-base {
             background: var(--glass-bg); backdrop-filter: blur(12px);
             border: var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 20px;
@@ -125,7 +112,7 @@
         /* --- 立體感行程卡片 --- */
         .timeline-item { 
             position: relative;
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             
@@ -155,6 +142,8 @@
                 0 5px 15px -3px rgba(0, 0, 0, 0.15),
                 0 2px 5px -2px rgba(0, 0, 0, 0.1);
         }
+        
+        .timeline-item::before { display: none; }
 
         .t-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -391,46 +380,6 @@
         .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .login-btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
         .login-error { color: var(--accent); font-size: 0.9rem; margin-top: 10px; display: none; }
-
-        /* --- New Gemini AI Styles --- */
-        .ocr-btn {
-            background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
-            color: #fff; border: none;
-            padding: 15px; border-radius: 12px; font-size: 1rem; cursor: pointer; width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 15px; font-weight: bold;
-            transition: transform 0.1s;
-        }
-        .ocr-btn:active { transform: scale(0.96); }
-        .ocr-btn i { font-size: 1.2rem; color: #FFD700; }
-
-        /* Lvshou-style Receipt Card */
-        .receipt-card {
-            background: var(--jp-paper); 
-            border: 1px solid #e0e0e0;
-            padding: 0;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            position: relative;
-        }
-        .receipt-card::before {
-            content: ""; position: absolute; top: -5px; left: 0; width: 100%; height: 10px;
-            background: linear-gradient(135deg, transparent 33%, var(--jp-paper) 33%, var(--jp-paper) 66%, transparent 66%) 0 0/ 15px 15px;
-        }
-        .receipt-header { text-align: center; padding: 25px 15px 10px; border-bottom: 1px dashed #ccc; }
-        .receipt-store { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 5px; }
-        .receipt-date { font-size: 0.8rem; color: #888; font-family: 'Montserrat', sans-serif; }
-        .receipt-body { padding: 10px 15px; max-height: 250px; overflow-y: auto;}
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; align-items: flex-start; border-bottom:1px solid #fcfcfc; padding-bottom:5px;}
-        .receipt-name { flex: 1; color: #444; line-height: 1.4; margin-left: 8px; }
-        .receipt-price { width: 70px; text-align: right; font-weight: 600; color: #222; font-family: 'Montserrat', sans-serif; }
-        .receipt-check { margin-top: 3px; accent-color: var(--primary); transform: scale(1.1); flex: 0 0 auto; }
-        .receipt-footer { background: #faf9f5; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; }
-        .receipt-total-label { font-weight: bold; color: #555; font-size: 0.9rem;}
-        .receipt-total-amount { font-size: 1.3rem; font-weight: 800; color: var(--accent); font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
 <body>
@@ -593,50 +542,13 @@
 <div class="modal-overlay" id="modal-accounting">
     <div class="modal">
         <h3>記一筆</h3>
-        
-        <button class="ocr-btn" onclick="triggerGeminiScan()">
-            <i class="fa-solid fa-camera"></i> 掃描收據 (Lvshou Style)
-        </button>
-        <input type="file" id="gemini-input" accept="image/*" capture="environment" style="display:none" onchange="processImageWithGemini(this)">
-        
-        <div id="ocr-status" style="font-size:0.85rem; text-align:center; color:var(--primary); margin-bottom:10px; min-height:1.2em; font-weight:bold;"></div>
-        
-        <div id="ocr-result-area" class="receipt-card">
-            <div class="receipt-header">
-                <div class="receipt-store" id="receipt-store-name">Store Name</div>
-                <div class="receipt-date" id="receipt-date-display">2026.01.18</div>
-            </div>
-            <div class="receipt-body" id="ocr-list-container">
-                </div>
-            <div class="receipt-footer">
-                <div class="receipt-total-label">合計</div>
-                <div class="receipt-total-amount">¥<span id="ocr-subtotal">0</span></div>
-            </div>
-        </div>
-
-        <div style="font-size:0.8rem; color:#666; margin-bottom:10px; margin-top:20px;">付款人</div>
+        <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">付款人</div>
         <div class="payer-selector" id="payer-selector"></div>
-        
-        <div class="form-group" style="margin-top:20px; display:flex; gap:10px;">
-            <div style="flex:1;">
-                <label>金額</label>
-                <input type="number" id="inp-amount" placeholder="金額" style="font-size:1.5rem; text-align:center; font-weight:bold;">
-            </div>
-            <div style="width:80px;">
-                <label>幣別</label>
-                <select id="inp-curr" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:1rem; height:52px; background:#fff;">
-                    <option value="JPY">JPY</option>
-                    <option value="TWD">TWD</option>
-                </select>
-            </div>
+        <div class="form-group" style="margin-top:20px;">
+            <label>金額</label><input type="number" id="inp-amount" placeholder="金額" style="font-size:1.5rem; text-align:center;">
+            <div class="currency-toggle"><div class="curr-opt selected" onclick="setCurrency('JPY')" id="curr-jpy">JPY</div><div class="curr-opt" onclick="setCurrency('TWD')" id="curr-twd">TWD</div></div>
         </div>
-        <div class="form-group">
-            <label>項目</label>
-            <input type="text" id="inp-item" placeholder="如: 晚餐">
-        </div>
-        
-        <input type="hidden" id="inp-date-override">
-
+        <div class="form-group"><label>項目</label><input type="text" id="inp-item" placeholder="如: 晚餐"></div>
         <label class="personal-check"><input type="checkbox" id="inp-personal"> 個人消費 (不分帳)</label>
         <button class="btn-save" style="background:var(--accent)" onclick="saveExpense()">記錄</button><button class="btn-cancel" onclick="closeModal('modal-accounting')">取消</button>
     </div>
@@ -644,17 +556,7 @@
 
 <div class="modal-overlay" id="modal-settings">
     <div class="modal">
-        <h3>設定</h3>
-        
-        <div class="form-group" style="background:#f8f9fa; padding:15px; border-radius:12px; margin-bottom:20px;">
-            <label style="color:var(--primary); font-weight:bold;">Google Gemini API Key (必填)</label>
-            <input type="text" id="set-api-key" placeholder="貼上 AIza 開頭的金鑰..." style="font-size:0.9rem; border:1px solid #ddd; margin-top:5px; width:100%;">
-            <div style="font-size:0.75rem; color:#666; margin-top:8px; line-height:1.4;">
-                要啟用 AI 掃描，請至 <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent); font-weight:bold;">Google AI Studio</a> 申請免費 Key。
-            </div>
-        </div>
-
-        <h4 style="margin:0 0 10px 0; color:#555;">旅伴管理</h4>
+        <h3>旅伴設定</h3>
         <div id="settings-user-list"></div>
         <div style="text-align:center; margin-top:10px; border-top:1px dashed #eee; padding-top:10px;"><button onclick="addNewUserField()" style="background:none; border:1px solid #ddd; padding:5px 10px; border-radius:15px; color:#666; font-size:0.8rem;">+ 新增旅伴</button></div>
         <button class="btn-save" onclick="saveUserSettings()">儲存設定</button>
@@ -686,8 +588,6 @@
 </div>
 
 <script>
-    // --- FIREBASE CONFIG (請填入您自己的設定) ---
-    // 提醒：這是公開的範例 Config，請記得改回您自己的
     const firebaseConfig = {
       apiKey: "AIzaSyBu0wGXAk5rV-ftOVzEMenGeX8oiRUVA5g",
       authDomain: "nagoya-trip-ab8fb.firebaseapp.com",
@@ -720,7 +620,6 @@
     let sortableInstance = null; 
     let exchangeRate = 0.22; 
     let currentChecklistTab = null; 
-    let geminiKey = localStorage.getItem('gemini_key') || '';
 
     auth.onAuthStateChanged((user) => {
         const loginScreen = document.getElementById('login-screen');
@@ -760,13 +659,6 @@
 
     function init() {
         initDurationOptions();
-        
-        const today = new Date();
-        const diffTime = today - TRIP_START_DATE;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays >= 0 && diffDays < TOTAL_DAYS) {
-            currentDayIndex = diffDays;
-        }
 
         db.ref('tripData').on('value', (snapshot) => {
             const val = snapshot.val();
@@ -796,7 +688,6 @@
 
                 renderDateBar();
                 updateViewContent();
-                scrollToActiveDay();
             } else {
                 generateDefaultChecklist();
                 saveToFirebase();
@@ -811,186 +702,8 @@
         startRealtimeClock(); 
         fetchExchangeRate();
         initSwipeDetection();
-        
-        // 確保每次重新整理後 Key 能正確填入
-        document.getElementById('set-api-key').value = geminiKey;
     }
     
-    // --- 增強版 AI 掃描函式 (包含錯誤顯示與 JSON 強力清洗) ---
-    function triggerGeminiScan() {
-        if(!geminiKey) { 
-            alert("⚠️ 尚未設定 API Key\n\n請先至右上角「設定」貼上 Google Gemini API Key，才能使用 AI 辨識功能。"); 
-            openSettings(); return; 
-        }
-        document.getElementById('gemini-input').click();
-    }
-
-    // --- 強力診斷版 AI 掃描函式 ---
-    async function processImageWithGemini(input) {
-        // 步驟 1: 檢查檔案
-        if (!input.files[0]) return;
-        const file = input.files[0];
-        
-        // 步驟 2: 檢查 Key
-        const currentKey = document.getElementById('set-api-key').value || localStorage.getItem('gemini_key');
-        if(!currentKey || !currentKey.startsWith("AIza")) {
-            alert("❌ 錯誤：找不到有效的 API Key！\n請按右上角「齒輪」，在設定中貼上您的 Google Gemini API Key，並確認開頭是 AIza。");
-            openSettings();
-            return;
-        }
-
-        const statusDiv = document.getElementById('ocr-status');
-        const listContainer = document.getElementById('ocr-list-container');
-        const receiptCard = document.getElementById('ocr-result-area');
-
-        statusDiv.innerText = "🚀 步驟 1/3: 圖片處理中...";
-        receiptCard.style.display = 'none';
-
-        try {
-            // 步驟 3: 壓縮圖片
-            const compressedBase64 = await compressImage(file, 800, 0.7); // 降低畫質以提高成功率
-            
-            statusDiv.innerText = "📡 步驟 2/3: 傳送給 Google AI...";
-            
-            const promptText = `
-            You are a receipt scanner. Extract data to strict JSON:
-            {"store": "StoreName", "date": "2026-01-01", "currency": "JPY", "items": [{"name": "Item", "price": 100}]}
-            If date missing use 2026-01-01. Only JSON, no markdown.
-            `;
-
-            // 步驟 4: 發送請求 (增加錯誤捕捉)
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { text: promptText },
-                            { inline_data: { mime_type: "image/jpeg", data: compressedBase64 } }
-                        ]
-                    }]
-                })
-            });
-
-            statusDiv.innerText = "📩 步驟 3/3: 接收回應...";
-
-            // 步驟 5: 檢查 HTTP 狀態
-            if (response.status !== 200) {
-                const errText = await response.text();
-                alert(`❌ Google API 報錯 (代碼 ${response.status}):\n${errText}`);
-                throw new Error(`API 回傳錯誤代碼: ${response.status}`);
-            }
-
-            const data = await response.json();
-            
-            // 步驟 6: 解析內容
-            if (!data.candidates || !data.candidates[0].content) {
-                alert("⚠️ AI 回傳了空的內容。可能是圖片模糊，或觸發了安全過濾機制。");
-                throw new Error("AI 回應為空");
-            }
-            
-            let textResult = data.candidates[0].content.parts[0].text;
-            // 清洗 JSON
-            textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
-            const jsonStart = textResult.indexOf('{');
-            const jsonEnd = textResult.lastIndexOf('}');
-            if(jsonStart > -1 && jsonEnd > -1) {
-                textResult = textResult.substring(jsonStart, jsonEnd+1);
-            }
-
-            let receiptData;
-            try {
-                receiptData = JSON.parse(textResult);
-            } catch (e) {
-                alert("❌ JSON 解析失敗，AI 回傳了奇怪的格式:\n" + textResult);
-                throw e;
-            }
-
-            // 步驟 7: 顯示結果 (包含 DOM 檢查)
-            statusDiv.innerText = "✅ 成功！正在寫入介面...";
-            
-            document.getElementById('receipt-store-name').innerText = receiptData.store || "未知店家";
-            document.getElementById('receipt-date-display').innerText = receiptData.date || "日期不明";
-            
-            // 這裡最容易錯，增加保護
-            try {
-                if(receiptData.currency === 'JPY') setCurrency('JPY');
-            } catch(e) { console.error("設定幣別失敗", e); }
-
-            if(receiptData.date) document.getElementById('inp-date-override').value = receiptData.date;
-
-            listContainer.innerHTML = '';
-            if(receiptData.items && receiptData.items.length > 0) {
-                receiptData.items.forEach(item => {
-                    listContainer.innerHTML += `
-                    <div class="receipt-row">
-                        <div style="display:flex; align-items:flex-start; flex:1;">
-                            <input type="checkbox" class="receipt-check" checked onchange="recalcTotal()" data-name="${item.name}" data-price="${item.price}">
-                            <span class="receipt-name">${item.name}</span>
-                        </div>
-                        <div class="receipt-price">${item.price}</div>
-                    </div>`;
-                });
-            }
-
-            document.getElementById('inp-item').dataset.store = receiptData.store || "";
-            recalcTotal();
-            receiptCard.style.display = 'block';
-            statusDiv.innerText = "✅ 完成";
-
-        } catch (e) {
-            console.error(e);
-            statusDiv.innerText = "❌ 失敗";
-            statusDiv.style.color = "red";
-            // 如果前面沒有 alert 過，這裡再 alert 一次
-            if(!e.message.includes("API 回傳錯誤代碼")) {
-                alert("程式執行錯誤:\n" + e.message);
-            }
-        }
-    }
-
-    function recalcTotal() {
-        let total = 0;
-        let selectedItems = [];
-        const store = document.getElementById('inp-item').dataset.store || "";
-        
-        document.querySelectorAll('.receipt-check:checked').forEach(chk => {
-            const p = parseFloat(chk.dataset.price) || 0;
-            const n = chk.dataset.name;
-            total += p;
-            selectedItems.push(`${n}`);
-        });
-
-        document.getElementById('ocr-subtotal').innerText = total.toLocaleString();
-        document.getElementById('inp-amount').value = total;
-        
-        let note = store;
-        if(selectedItems.length > 0) note += (note?" - ":"") + selectedItems.join(", ");
-        if(note.length > 50) note = note.substring(0,50) + "...";
-        document.getElementById('inp-item').value = note;
-    }
-
-    function compressImage(file, maxWidth, quality) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
-                    const cvs = document.createElement('canvas');
-                    let w = img.width; let h = img.height;
-                    if(w > maxWidth) { h *= maxWidth/w; w = maxWidth; }
-                    cvs.width = w; cvs.height = h;
-                    const ctx = cvs.getContext('2d');
-                    ctx.fillStyle = "#fff"; ctx.fillRect(0,0,w,h);
-                    ctx.drawImage(img, 0, 0, w, h);
-                    resolve(cvs.toDataURL('image/jpeg', quality).split(',')[1]);
-                };
-            };
-        });
-    }
-
     function generateDefaultChecklist() {
         const allEssentials = [
             "護照 (效期6個月以上)", "日幣現金 / 信用卡", "機票 / 住宿憑證",
@@ -999,7 +712,9 @@
             "牙刷 / 牙膏", "洗面乳 / 保養品", "刮鬍刀 / 眼鏡",
             "隨身雨具", "常備藥品", "塑膠袋 (裝髒衣物)", "面紙 / 濕紙巾"
         ];
+
         checklistData = [];
+
         users.forEach(u => {
             allEssentials.forEach(t => {
                 checklistData.push({ text: t, checked: false, owner: u.id });
@@ -1028,7 +743,7 @@
             if (isAnimating) return; 
             const xDist = touchEndX - touchStartX;
             const yDist = touchEndY - touchStartY;
-            if (Math.abs(yDist) > 60) return;
+            if (Math.abs(yDist) > 50) return;
 
             if (Math.abs(xDist) > 50) {
                 if (xDist > 0) {
@@ -1179,9 +894,9 @@
                 iconHTML = '<i class="fa-regular fa-snowflake anim-snow"></i>';
             } else {
                 if (code >= 95) {
-                      iconHTML = '<i class="fa-solid fa-cloud-bolt anim-storm"></i>';
+                     iconHTML = '<i class="fa-solid fa-cloud-bolt anim-storm"></i>';
                 } else {
-                      iconHTML = '<i class="fa-solid fa-cloud-rain anim-rain"></i>';
+                     iconHTML = '<i class="fa-solid fa-cloud-rain anim-rain"></i>';
                 }
             }
             iconContainer.innerHTML = iconHTML;
@@ -1229,7 +944,6 @@
         let items = itinData[dayIdx] || [];
         
         container.innerHTML = items.length ? items.map((item, idx) => {
-            // [修復] 使用標準的 Google Maps 搜尋連結
             const mapUrl = item.link ? item.link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.activity)}`;
             const durDisplay = formatDuration(item.duration);
             return `
@@ -1260,11 +974,7 @@
             onEnd: function (evt) {
                 const newItems = [];
                 const itemEls = container.querySelectorAll('.timeline-item');
-                const currentDayItems = itinData[dayIdx];
-                itemEls.forEach(el => {
-                   const oldIndex = parseInt(el.getAttribute('data-index'));
-                   if(currentDayItems[oldIndex]) newItems.push(currentDayItems[oldIndex]);
-                });
+                itemEls.forEach(el => newItems.push(itinData[dayIdx][el.getAttribute('data-index')]));
                 itinData[dayIdx] = newItems;
                 saveToFirebase();
                 renderItineraryList(dayIdx);
@@ -1301,19 +1011,12 @@
         const newItem = { time, activity: act, note, link, duration: durMins };
         if(editIdx !== "") itinData[currentDayIndex][parseInt(editIdx)] = newItem;
         else itinData[currentDayIndex].push(newItem);
-        
-        itinData[currentDayIndex].sort((a, b) => a.time.localeCompare(b.time));
-
         saveToFirebase();
         closeModal('modal-itinerary');
         renderItineraryList(currentDayIndex);
     }
     function deleteItin(d, i){ if(confirm('刪除?')){ itinData[d].splice(i,1); saveToFirebase(); }}
-    function searchMapTest() { 
-        const val = document.getElementById('inp-act').value; 
-        if(val) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`, '_blank'); 
-        else alert("請先輸入地點名稱"); 
-    }
+    function searchMapTest() { const val = document.getElementById('inp-act').value; if(val) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`, '_blank'); else alert("請先輸入地點名稱"); }
 
     function renderChecklist() {
         const tabContainer = document.getElementById('checklist-tabs');
@@ -1381,23 +1084,23 @@
         users.forEach(u => paidByStats[u.id] = 0);
         for (let d in expenseData) {
             expenseData[d].forEach(ex => {
-                let amt = parseFloat(ex.amount);
+                let amt = parseInt(ex.amount);
                 if(ex.curr === 'JPY' && !ex.isPersonal) { 
                     totalJPY += amt;
                     if(paidByStats[ex.payer] !== undefined) paidByStats[ex.payer] += amt;
                 }
             });
         }
-        document.getElementById('total-jpy').innerText = `¥${Math.round(totalJPY).toLocaleString()}`;
-        document.getElementById('total-twd').innerText = Math.round(totalJPY * exchangeRate).toLocaleString();
-        document.getElementById('user-split-list').innerHTML = users.map(u => `<div class="user-split-row"><div class="usr-info"><img src="${u.avatar}" class="usr-avatar"> ${u.name} (公費代墊)</div><div style="font-weight:bold;">¥${Math.round(paidByStats[u.id] || 0).toLocaleString()}</div></div>`).join('');
+        document.getElementById('total-jpy').innerText = `¥${totalJPY.toLocaleString()}`;
+        document.getElementById('total-twd').innerText = (totalJPY * exchangeRate).toFixed(0);
+        document.getElementById('user-split-list').innerHTML = users.map(u => `<div class="user-split-row"><div class="usr-info"><img src="${u.avatar}" class="usr-avatar"> ${u.name} (公費代墊)</div><div style="font-weight:bold;">¥${(paidByStats[u.id] || 0).toLocaleString()}</div></div>`).join('');
         
         const container = document.getElementById('accounting-list');
         let items = expenseData[dayIdx] || [];
         container.innerHTML = items.length ? items.map((item, idx) => {
             const payer = users.find(u => u.id === item.payer) || { avatar: '', name: '未知' };
             const personalTag = item.isPersonal ? '<span style="font-size:0.6rem; background:#eee; padding:2px 5px; border-radius:4px; margin-left:5px;">個人</span>' : '';
-            return `<div class="expense-item"><div style="display:flex; align-items:center;"><img src="${payer.avatar}" class="ex-img"><div><div style="font-size:1rem;">${item.item} ${personalTag}</div><div style="font-size:0.7rem; color:#999;">${payer.name} 付款</div></div></div><div><div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">${item.curr==='JPY'?'¥':'$'}${parseFloat(item.amount).toLocaleString()}</div><button class="icon-btn del" style="float:right; margin-top:5px;" onclick="deleteExpense(${dayIdx}, ${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`;
+            return `<div class="expense-item"><div style="display:flex; align-items:center;"><img src="${payer.avatar}" class="ex-img"><div><div style="font-size:1rem;">${item.item} ${personalTag}</div><div style="font-size:0.7rem; color:#999;">${payer.name} 付款</div></div></div><div><div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">${item.curr==='JPY'?'¥':'$'}${parseInt(item.amount).toLocaleString()}</div><button class="icon-btn del" style="float:right; margin-top:5px;" onclick="deleteExpense(${dayIdx}, ${idx})"><i class="fa-solid fa-trash"></i></button></div></div>`;
         }).join('') : '<div style="text-align:center;color:#ccc;font-size:0.8rem;padding:20px;">本日無消費</div>';
     }
     
@@ -1446,11 +1149,10 @@
             users.forEach(u => { paidMap[u.id] = 0; personalMap[u.id] = 0; });
 
             for (let i = startIdx; i <= endIdx; i++) {
-                // [修復] 增加判斷以防空值導致崩潰
-                if (expenseData[i] && Array.isArray(expenseData[i])) {
+                if (expenseData[i]) {
                     expenseData[i].forEach(item => {
                         if (item.curr === curr) {
-                            let amt = parseFloat(item.amount);
+                            let amt = parseInt(item.amount);
                             if (item.isPersonal) { if (personalMap[item.payer] !== undefined) personalMap[item.payer] += amt; }
                             else { if (paidMap[item.payer] !== undefined) paidMap[item.payer] += amt; sharedTotal += amt; }
                         }
@@ -1489,51 +1191,21 @@
         document.getElementById('settle-content').innerHTML = content;
     }
 
-    // [修復] setCurrency：現在直接操作下拉選單
-    function setCurrency(c) {
-        currentCurrency = c;
-        const dropdown = document.getElementById('inp-curr');
-        if(dropdown) {
-            dropdown.value = c;
-        }
-    }
-
     function renderPayerSelector() { document.getElementById('payer-selector').innerHTML = users.map(u => `<div class="payer-opt ${selectedPayerId === u.id ? 'selected' : ''}" onclick="selectPayer('${u.id}')"><img src="${u.avatar}"><div style="font-size:0.7rem;">${u.name}</div></div>`).join(''); }
     function selectPayer(id) { selectedPayerId = id; renderPayerSelector(); }
+    function setCurrency(c) { currentCurrency = c; document.getElementById('curr-jpy').className = c==='JPY'?'curr-opt selected':'curr-opt'; document.getElementById('curr-twd').className = c==='TWD'?'curr-opt selected':'curr-opt'; }
 
     function saveExpense() {
         const amt = document.getElementById('inp-amount').value;
         const item = document.getElementById('inp-item').value;
-        const curr = document.getElementById('inp-curr').value;
-        const personal = document.getElementById('inp-personal').checked;
-        const overrideDate = document.getElementById('inp-date-override').value; 
-        
+        const isPersonal = document.getElementById('inp-personal').checked;
         if(!amt || !item) return;
-        
-        let targetDay = currentDayIndex;
-        // 如果收據有日期，嘗試切換
-        if(overrideDate && typeof TRIP_START_DATE !== 'undefined') {
-            const recDate = new Date(overrideDate);
-            const diffDays = Math.floor((recDate - TRIP_START_DATE) / (1000 * 60 * 60 * 24));
-            if(diffDays >= 0 && diffDays < TOTAL_DAYS) targetDay = diffDays;
-        }
-
-        if(!expenseData[targetDay]) expenseData[targetDay] = [];
+        if(!expenseData[currentDayIndex]) expenseData[currentDayIndex] = [];
         const payer = selectedPayerId || (users.length > 0 ? users[0].id : 'unknown');
-        
-        expenseData[targetDay].push({ amount: amt, item: item, payer: payer, curr: curr, isPersonal: personal });
+        expenseData[currentDayIndex].push({ amount: amt, item: item, payer: payer, curr: currentCurrency, isPersonal: isPersonal });
         saveToFirebase();
-        
-        if(targetDay !== currentDayIndex) {
-            currentDayIndex = targetDay;
-            renderDateBar();
-            updateViewContent();
-            alert(`已自動切換並記帳於 Day ${targetDay+1}`);
-        }
-        
         closeModal('modal-accounting');
     }
-    
     function deleteExpense(d, i){ if(confirm('刪除?')){ expenseData[d].splice(i,1); saveToFirebase(); }}
 
     function openSettings(){ 
@@ -1605,12 +1277,7 @@
     }
     
     function saveUserSettings() { 
-        const key = document.getElementById('set-api-key').value;
-        if(key) { geminiKey = key; localStorage.setItem('gemini_key', key); }
-        
-        users = getCurrentSettingsInput(); 
-        saveToFirebase(); 
-        closeModal('modal-settings'); 
+        users = getCurrentSettingsInput(); saveToFirebase(); closeModal('modal-settings'); 
         if(!users.find(u=>u.id===selectedPayerId)) selectedPayerId=users[0].id; 
         if(currentView==='accounting') renderAccountingView(currentDayIndex); 
     }
@@ -1620,7 +1287,6 @@
             if(currentView==='itinerary'){ 
                 document.getElementById('modal-itin-title').innerText="新增行程"; 
                 document.getElementById('edit-mode-idx').value=""; 
-                
                 let nextTime = "09:00"; 
                 const currentList = itinData[currentDayIndex] || [];
                 if (currentList.length > 0) {
@@ -1629,7 +1295,6 @@
                     const dur = parseInt(lastItem.duration) || 60; 
                     if (lastTime) nextTime = addMinutes(lastTime, dur); 
                 }
-                
                 document.getElementById('inp-time').value = nextTime;
                 document.getElementById('inp-act').value=""; 
                 document.getElementById('inp-link').value=""; 
@@ -1645,12 +1310,6 @@
                 document.getElementById('inp-item').value=''; 
                 document.getElementById('inp-personal').checked = false; 
                 setCurrency('JPY'); 
-                
-                document.getElementById('ocr-result-area').style.display = 'none';
-                document.getElementById('ocr-list-container').innerHTML = '';
-                document.getElementById('ocr-status').innerText = '';
-                document.getElementById('inp-date-override').value = '';
-
                 document.getElementById('modal-accounting').style.display='flex'; 
             }
         } catch(e) {
