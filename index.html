@@ -19,7 +19,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -1330,88 +1330,154 @@
     }
     function closeModal(id){document.getElementById(id).style.display='none';}
 
-    // --- 發票辨識功能 (OCR) ---
+    // --- 加強版 OCR 發票辨識功能 (針對高效能手機優化) ---
 
     function triggerReceiptScan() {
         document.getElementById('receipt-input').click();
     }
 
+    // 影像預處理：將照片轉為「高對比黑白」，去除陰影和雜訊
+    function preprocessImage(file, callback) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 設定畫布大小 (iPhone 15 Pro 照片很大，適度縮小以加快處理，但保持足夠解析度)
+                const MAX_WIDTH = 2000; 
+                let width = img.width;
+                let height = img.height;
+
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // 取得像素數據
+                const imageData = ctx.getImageData(0, 0, width, height);
+                const data = imageData.data;
+
+                // 演算法：灰階化 + 二值化 (Thresholding)
+                // 這會讓文字變得很黑，背景變得很白
+                for (let i = 0; i < data.length; i += 4) {
+                    // 轉灰階 (加權平均法)
+                    const avg = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+                    
+                    // 二值化閥值 (Threshold)，數值越小雜訊越少但字可能會斷，120-140 是發票的甜蜜點
+                    const threshold = 130; 
+                    const value = avg > threshold ? 255 : 0;
+
+                    data[i] = value;     // R
+                    data[i + 1] = value; // G
+                    data[i + 2] = value; // B
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                
+                // 回傳處理後的圖片 Blob
+                canvas.toBlob((blob) => {
+                    callback(blob);
+                }, 'image/jpeg', 0.9);
+            }
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+
     function processReceipt(input) {
         if (!input.files || !input.files[0]) return;
         
-        const file = input.files[0];
+        const originalFile = input.files[0];
         const statusDiv = document.getElementById('ocr-status');
         const amountInp = document.getElementById('inp-amount');
         const itemInp = document.getElementById('inp-item');
 
-        statusDiv.innerText = "⏳ 影像處理中...";
+        statusDiv.innerText = "⚡️ 影像優化處理中 (善用 A17 晶片)...";
         statusDiv.style.color = "var(--primary)";
 
-        // 使用 Tesseract 進行辨識
-        Tesseract.recognize(
-            file,
-            'jpn', // 使用日文包 (也會包含英文數字)
-            {
-                logger: m => {
-                    if(m.status === 'recognizing text') {
-                        statusDiv.innerText = `🔍 辨識中... ${Math.round(m.progress * 100)}%`;
-                    } else if (m.status === 'loading tesseract core') {
-                        statusDiv.innerText = "🚀 載入核心中...";
+        // 1. 先進行影像預處理
+        preprocessImage(originalFile, (processedBlob) => {
+            
+            // 2. 使用 Tesseract v5 進行辨識
+            Tesseract.recognize(
+                processedBlob,
+                'jpn', // 日文包 (包含漢字與英文數字)
+                {
+                    logger: m => {
+                        if(m.status === 'recognizing text') {
+                            statusDiv.innerText = `🔍 AI 辨識中... ${Math.round(m.progress * 100)}%`;
+                        } else if (m.status === 'loading tesseract core') {
+                            statusDiv.innerText = "🚀 啟動引擎中...";
+                        }
                     }
                 }
-            }
-        ).then(({ data: { text } }) => {
-            console.log("OCR Result:", text);
-            statusDiv.innerText = "✅ 辨識完成！";
-            statusDiv.style.color = "green";
+            ).then(({ data: { text } }) => {
+                console.log("OCR Raw Text:", text);
+                statusDiv.innerText = "✅ 辨識完成！";
+                statusDiv.style.color = "green";
 
-            // 1. 嘗試抓取金額
-            let extractedAmount = 0;
-            const cleanText = text.replace(/,/g, '');
-            
-            // Regex 1: 抓取 "合計" 或 "Total" 或 "¥" 後面的數字
-            const totalMatch = cleanText.match(/(?:合計|Total|Payment|¥|￥)\s*[:.]?\s*([0-9]+)/i);
-            
-            if (totalMatch && totalMatch[1]) {
-                extractedAmount = parseInt(totalMatch[1]);
-            } else {
-                // Regex 2: 如果找不到關鍵字，嘗試抓取所有單獨的數字，並取最大值
-                const allNumbers = cleanText.match(/\d+/g);
-                if (allNumbers) {
-                    const numbers = allNumbers.map(n => parseInt(n)).filter(n => n > 10 && n < 1000000); 
-                    if(numbers.length > 0) {
-                        extractedAmount = Math.max(...numbers);
+                // --- 解析邏輯 (同前版，但因影像清晰，準確度會提高) ---
+                
+                // 1. 抓取金額
+                let extractedAmount = 0;
+                // 移除逗號與空格，將全形數字轉半形
+                const cleanText = text.replace(/,/g, '').replace(/ /g, '')
+                                      .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+
+                // 針對日本發票常見關鍵字優化 Regex
+                // 優先尋找「合計」、「小計」、「Total」、「¥」後面的數字
+                const totalRegex = /(?:合計|小計|Total|Payment|¥|￥|Amount)(?:[^0-9]*)([0-9]+)/i;
+                const totalMatch = cleanText.match(totalRegex);
+                
+                if (totalMatch && totalMatch[1]) {
+                    extractedAmount = parseInt(totalMatch[1]);
+                } else {
+                    // 備案：找最大的數字 (排除電話號碼長度，通常金額在 3~6 位數)
+                    const allNumbers = cleanText.match(/\d+/g);
+                    if (allNumbers) {
+                        // 過濾掉太長(電話)或太短的數字
+                        const numbers = allNumbers.map(n => parseInt(n)).filter(n => n > 10 && n < 2000000); 
+                        if(numbers.length > 0) {
+                            extractedAmount = Math.max(...numbers);
+                        }
                     }
                 }
-            }
 
-            if (extractedAmount > 0) {
-                amountInp.value = extractedAmount;
-                amountInp.style.backgroundColor = "#e8f5e9";
-                setTimeout(()=> amountInp.style.backgroundColor = "transparent", 500);
-            } else {
-                statusDiv.innerText = "⚠️ 數值不明，請手動輸入";
-            }
+                if (extractedAmount > 0) {
+                    amountInp.value = extractedAmount;
+                    amountInp.style.backgroundColor = "#e8f5e9"; // 綠色閃爍提示
+                    setTimeout(()=> amountInp.style.backgroundColor = "white", 800);
+                } else {
+                    statusDiv.innerText = "⚠️ 數值模糊，請手動輸入";
+                }
 
-            // 2. 嘗試抓取店家名稱
-            const lines = text.split('\n').filter(l => l.trim().length > 1);
-            let shopName = "";
-            if (lines.length > 0) {
-                shopName = lines[0].replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').substring(0, 10);
-            }
-            if (!itemInp.value && shopName) {
-                itemInp.value = shopName;
-            }
+                // 2. 抓取店家名稱 (取最上方字體最大或第一行清晰的文字)
+                // 這裡簡單取第一行非符號文字
+                const lines = text.split('\n').filter(l => l.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '').length > 2);
+                if (lines.length > 0 && !itemInp.value) {
+                    // 去除一些常見的雜訊字元
+                    let potentialName = lines[0].replace(/[:._-]/g, '').trim();
+                    itemInp.value = potentialName.substring(0, 15);
+                }
 
-            // 3. 嘗試判斷幣別
-            if (text.includes('¥') || text.includes('￥') || text.includes('円')) {
-                setCurrency('JPY');
-            }
+                // 3. 自動切換幣別
+                if (text.includes('¥') || text.includes('￥') || text.includes('円')) {
+                    setCurrency('JPY');
+                } else if (text.includes('NT') || text.includes('TW')) {
+                    setCurrency('TWD');
+                }
 
-        }).catch(err => {
-            console.error(err);
-            statusDiv.innerText = "❌ 辨識失敗，請重試";
-            statusDiv.style.color = "var(--accent)";
+            }).catch(err => {
+                console.error(err);
+                statusDiv.innerText = "❌ 辨識失敗，請重拍";
+                statusDiv.style.color = "var(--accent)";
+            });
         });
     }
 </script>
