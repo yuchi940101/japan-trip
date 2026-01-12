@@ -19,8 +19,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
-    
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { width: 100%; max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
@@ -32,7 +30,7 @@
             --text-main: #333333; 
             --text-sub: #555555; 
             
-            --glass-bg: rgba(255, 255, 255, 0.85); 
+            --glass-bg: rgba(255, 255, 255, 0.95); 
             --glass-border: 1px solid rgba(255, 255, 255, 0.6);
             --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
             
@@ -382,6 +380,25 @@
         .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .login-btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
         .login-error { color: var(--accent); font-size: 0.9rem; margin-top: 10px; display: none; }
+
+        /* AI OCR Styles */
+        .ocr-btn {
+            background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+            color: #fff; border: none;
+            padding: 12px 20px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 15px; font-weight: bold;
+            transition: transform 0.1s;
+        }
+        .ocr-btn:active { transform: scale(0.96); }
+        .ocr-btn i { font-size: 1.2rem; color: #FFD700; }
+
+        #ocr-result-area { margin-top: 15px; border: 1px solid #eee; border-radius: 12px; padding: 10px; background: #fff; display: none; max-height: 250px; overflow-y: auto;}
+        .ocr-item-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 5px; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
+        .ocr-item-row:last-child { border-bottom: none; }
+        .ocr-name { flex: 1; margin-left: 10px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ocr-price { font-weight: bold; color: var(--primary); width: 80px; text-align: right; }
+        .ocr-check { accent-color: var(--primary); width: 20px; height: 20px; flex: 0 0 auto; }
     </style>
 </head>
 <body>
@@ -545,14 +562,20 @@
     <div class="modal">
         <h3>記一筆</h3>
         
-        <div style="text-align: center; margin-bottom: 15px;">
-            <button onclick="triggerReceiptScan()" style="background: #f0f0f0; border: 1px dashed #999; color: #555; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; width: 100%;">
-                <i class="fa-solid fa-camera"></i> 掃描發票 (自動辨識)
-            </button>
-            <input type="file" id="receipt-input" accept="image/*" capture="environment" style="display: none;" onchange="processReceipt(this)">
-            <div id="ocr-status" style="font-size: 0.8rem; color: var(--accent); margin-top: 5px; height: 1.2em;"></div>
+        <button class="ocr-btn" onclick="triggerGeminiScan()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 辨識發票 (自動縮圖+明細)
+        </button>
+        <input type="file" id="gemini-input" accept="image/*" capture="environment" style="display:none" onchange="processImageWithGemini(this)">
+        
+        <div id="ocr-status" style="font-size:0.85rem; text-align:center; color:var(--tech-cyan); margin-bottom:10px; min-height:1.2em; font-weight:bold;"></div>
+        
+        <div id="ocr-result-area">
+            <div style="font-size:0.8rem; color:#888; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;">偵測到的項目 (勾選加入):</div>
+            <div id="ocr-list-container"></div>
+            <div style="text-align:right; font-size:1rem; margin-top:10px; font-weight:bold; color:var(--accent);">小計: <span id="ocr-subtotal">0</span></div>
         </div>
-        <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">付款人</div>
+
+        <div style="font-size:0.8rem; color:#666; margin-bottom:10px; margin-top:20px;">付款人</div>
         <div class="payer-selector" id="payer-selector"></div>
         <div class="form-group" style="margin-top:20px;">
             <label>金額</label><input type="number" id="inp-amount" placeholder="金額" style="font-size:1.5rem; text-align:center;">
@@ -566,6 +589,18 @@
 
 <div class="modal-overlay" id="modal-settings">
     <div class="modal">
+        <h3>設定</h3>
+        
+        <div class="form-group">
+            <label style="color:var(--accent); font-weight:bold;">Google Gemini API Key (必填)</label>
+            <input type="text" id="set-api-key" placeholder="貼上 AIza 開頭的金鑰..." style="font-size:0.9rem; border:1px solid var(--accent); padding:10px; border-radius:8px; width:100%;">
+            <div style="font-size:0.75rem; color:#666; margin-top:5px;">
+                1. <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--tech-cyan);">點此取得免費 Key</a><br>
+                2. 貼上並儲存，即可啟用 AI 發票辨識。
+            </div>
+        </div>
+        <hr style="border:0; border-top:1px dashed #eee; margin:15px 0;">
+
         <h3>旅伴設定</h3>
         <div id="settings-user-list"></div>
         <div style="text-align:center; margin-top:10px; border-top:1px dashed #eee; padding-top:10px;"><button onclick="addNewUserField()" style="background:none; border:1px solid #ddd; padding:5px 10px; border-radius:15px; color:#666; font-size:0.8rem;">+ 新增旅伴</button></div>
@@ -630,6 +665,7 @@
     let sortableInstance = null; 
     let exchangeRate = 0.22; 
     let currentChecklistTab = null; 
+    let geminiKey = localStorage.getItem('gemini_key') || '';
 
     auth.onAuthStateChanged((user) => {
         const loginScreen = document.getElementById('login-screen');
@@ -712,7 +748,169 @@
         startRealtimeClock(); 
         fetchExchangeRate();
         initSwipeDetection();
+        
+        // Load API Key to UI if exists
+        document.getElementById('set-api-key').value = geminiKey;
     }
+    
+    // --- Gemini AI Logic with Image Compression ---
+
+    function triggerGeminiScan() {
+        if(!geminiKey) { 
+            alert("⚠️ 尚未設定 API Key\n\n請先至右上角「設定」貼上 Google Gemini API Key，才能使用 AI 辨識功能。"); 
+            openSettings(); return; 
+        }
+        document.getElementById('gemini-input').click();
+    }
+
+    async function processImageWithGemini(input) {
+        if (!input.files[0]) return;
+        const file = input.files[0];
+        const statusDiv = document.getElementById('ocr-status');
+        const listContainer = document.getElementById('ocr-list-container');
+        const resultArea = document.getElementById('ocr-result-area');
+
+        statusDiv.innerText = "⏳ 壓縮圖片並上傳中...";
+        resultArea.style.display = 'none';
+        listContainer.innerHTML = '';
+
+        try {
+            // 1. 自動縮圖 (關鍵步驟！解決 iPhone 照片過大無法辨識的問題)
+            const compressedBase64 = await compressImage(file, 1024, 0.8);
+
+            statusDiv.innerText = "✨ AI 正在分析明細...";
+
+            // 2. 呼叫 Gemini API
+            const promptText = `Analyze this receipt image. 
+            Identify the store name, total amount, currency (JPY or TWD), and list all items with their prices.
+            Return ONLY a valid JSON object with this structure: 
+            {
+                "store": "store name",
+                "total": number,
+                "currency": "JPY",
+                "items": [{"name": "item name", "price": number}]
+            }
+            Do not include markdown formatting.`;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: promptText },
+                            { inline_data: { mime_type: "image/jpeg", data: compressedBase64 } }
+                        ]
+                    }]
+                })
+            });
+
+            const data = await response.json();
+            
+            // 檢查 API 錯誤
+            if (data.error) throw new Error(data.error.message);
+            if (!data.candidates || !data.candidates[0].content) throw new Error("AI 無法回應");
+
+            let textResult = data.candidates[0].content.parts[0].text;
+            // 清理 Markdown 標記 (```json ...)
+            textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
+            
+            // 3. 解析 JSON
+            const receiptData = JSON.parse(textResult);
+            console.log("Gemini Data:", receiptData);
+
+            // 4. 填入資料
+            statusDiv.innerText = "✅ 辨識成功！請確認項目";
+            statusDiv.style.color = "green";
+            resultArea.style.display = 'block';
+
+            if (receiptData.currency) {
+                if (receiptData.currency === 'JPY' || receiptData.currency === '円') setCurrency('JPY');
+                else setCurrency('TWD');
+            }
+            
+            if (receiptData.store) document.getElementById('inp-item').dataset.store = receiptData.store;
+            
+            // 產生明細清單
+            receiptData.items.forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'ocr-item-row';
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; flex:1; overflow:hidden;">
+                        <input type="checkbox" class="ocr-check" checked onchange="calcOCRTotal()" data-name="${item.name}" data-price="${item.price}">
+                        <span class="ocr-name">${item.name}</span>
+                    </div>
+                    <span class="ocr-price">${item.price}</span>
+                `;
+                listContainer.appendChild(div);
+            });
+
+            calcOCRTotal(); 
+
+        } catch (e) {
+            console.error(e);
+            statusDiv.innerText = "❌ 辨識失敗：" + e.message;
+            statusDiv.style.color = "var(--accent)";
+        }
+    }
+
+    // 圖片壓縮函式 (Canvas)
+    function compressImage(file, maxWidth, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // 轉回 Base64 (去除 data:image/jpeg;base64, 前綴)
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    resolve(dataUrl.split(',')[1]);
+                };
+                img.onerror = (err) => reject(err);
+            };
+            reader.onerror = (err) => reject(err);
+        });
+    }
+
+    function calcOCRTotal() {
+        let total = 0;
+        let items = [];
+        const storeName = document.getElementById('inp-item').dataset.store || "";
+        
+        document.querySelectorAll('.ocr-check:checked').forEach(chk => {
+            const p = parseFloat(chk.dataset.price);
+            const n = chk.dataset.name;
+            if(!isNaN(p)) total += p;
+            items.push(`${n} (${p})`);
+        });
+
+        document.getElementById('inp-amount').value = total;
+        document.getElementById('ocr-subtotal').innerText = total;
+        
+        // 自動生成備註
+        let desc = storeName;
+        if(items.length > 0) {
+            desc += (desc ? " - " : "") + items.join(", ");
+        }
+        document.getElementById('inp-item').value = desc;
+    }
+
+    // --- End Gemini Logic ---
     
     function generateDefaultChecklist() {
         const allEssentials = [
@@ -928,8 +1126,8 @@
         } else { document.getElementById('weather-loc').innerHTML = '<i class="fa-solid fa-ban"></i> 不支援定位'; }
     }
 
-    function openTenki() { window.open('https://tenki.jp/', '_blank'); }
-    function openTigerair() { window.open('https://www.tigerairtw.com/zh-tw', '_blank'); }
+    function openTenki() { window.open('[https://tenki.jp/](https://tenki.jp/)', '_blank'); }
+    function openTigerair() { window.open('[https://www.tigerairtw.com/zh-tw](https://www.tigerairtw.com/zh-tw)', '_blank'); }
 
     function minsToParts(mins) {
         if (!mins && mins !== 0) return {h:1, m:0}; 
@@ -1116,7 +1314,7 @@
     
     async function fetchExchangeRate() {
         try {
-            const res = await fetch('https://api.exchangerate-api.com/v4/latest/JPY');
+            const res = await fetch('[https://api.exchangerate-api.com/v4/latest/JPY](https://api.exchangerate-api.com/v4/latest/JPY)');
             const data = await res.json();
             if(data.rates && data.rates.TWD) {
                 exchangeRate = data.rates.TWD;
@@ -1264,7 +1462,7 @@
 
     function addNewUserField() { 
         const temp = getCurrentSettingsInput(); 
-        temp.push({id:'u'+Date.now(), name:'新旅伴', avatar:'https://api.dicebear.com/7.x/notionists/svg?seed='+Date.now()}); 
+        temp.push({id:'u'+Date.now(), name:'新旅伴', avatar:'[https://api.dicebear.com/7.x/notionists/svg?seed='+Date.now](https://api.dicebear.com/7.x/notionists/svg?seed='+Date.now)()}); 
         users = temp; openSettings(); 
     }
     
@@ -1287,7 +1485,12 @@
     }
     
     function saveUserSettings() { 
-        users = getCurrentSettingsInput(); saveToFirebase(); closeModal('modal-settings'); 
+        const key = document.getElementById('set-api-key').value;
+        if(key) { geminiKey = key; localStorage.setItem('gemini_key', key); }
+        
+        users = getCurrentSettingsInput(); 
+        saveToFirebase(); 
+        closeModal('modal-settings'); 
         if(!users.find(u=>u.id===selectedPayerId)) selectedPayerId=users[0].id; 
         if(currentView==='accounting') renderAccountingView(currentDayIndex); 
     }
@@ -1320,6 +1523,12 @@
                 document.getElementById('inp-item').value=''; 
                 document.getElementById('inp-personal').checked = false; 
                 setCurrency('JPY'); 
+                
+                // 重置 OCR 區域
+                document.getElementById('ocr-result-area').style.display='none';
+                document.getElementById('ocr-list-container').innerHTML = '';
+                document.getElementById('ocr-status').innerText = '';
+                
                 document.getElementById('modal-accounting').style.display='flex'; 
             }
         } catch(e) {
@@ -1329,157 +1538,6 @@
         }
     }
     function closeModal(id){document.getElementById(id).style.display='none';}
-
-    // --- 加強版 OCR 發票辨識功能 (針對高效能手機優化) ---
-
-    function triggerReceiptScan() {
-        document.getElementById('receipt-input').click();
-    }
-
-    // 影像預處理：將照片轉為「高對比黑白」，去除陰影和雜訊
-    function preprocessImage(file, callback) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // 設定畫布大小 (iPhone 15 Pro 照片很大，適度縮小以加快處理，但保持足夠解析度)
-                const MAX_WIDTH = 2000; 
-                let width = img.width;
-                let height = img.height;
-
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-                
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // 取得像素數據
-                const imageData = ctx.getImageData(0, 0, width, height);
-                const data = imageData.data;
-
-                // 演算法：灰階化 + 二值化 (Thresholding)
-                // 這會讓文字變得很黑，背景變得很白
-                for (let i = 0; i < data.length; i += 4) {
-                    // 轉灰階 (加權平均法)
-                    const avg = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
-                    
-                    // 二值化閥值 (Threshold)，數值越小雜訊越少但字可能會斷，120-140 是發票的甜蜜點
-                    const threshold = 130; 
-                    const value = avg > threshold ? 255 : 0;
-
-                    data[i] = value;     // R
-                    data[i + 1] = value; // G
-                    data[i + 2] = value; // B
-                }
-                
-                ctx.putImageData(imageData, 0, 0);
-                
-                // 回傳處理後的圖片 Blob
-                canvas.toBlob((blob) => {
-                    callback(blob);
-                }, 'image/jpeg', 0.9);
-            }
-            img.src = event.target.result;
-        }
-        reader.readAsDataURL(file);
-    }
-
-    function processReceipt(input) {
-        if (!input.files || !input.files[0]) return;
-        
-        const originalFile = input.files[0];
-        const statusDiv = document.getElementById('ocr-status');
-        const amountInp = document.getElementById('inp-amount');
-        const itemInp = document.getElementById('inp-item');
-
-        statusDiv.innerText = "⚡️ 影像優化處理中 (善用 A17 晶片)...";
-        statusDiv.style.color = "var(--primary)";
-
-        // 1. 先進行影像預處理
-        preprocessImage(originalFile, (processedBlob) => {
-            
-            // 2. 使用 Tesseract v5 進行辨識
-            Tesseract.recognize(
-                processedBlob,
-                'jpn', // 日文包 (包含漢字與英文數字)
-                {
-                    logger: m => {
-                        if(m.status === 'recognizing text') {
-                            statusDiv.innerText = `🔍 AI 辨識中... ${Math.round(m.progress * 100)}%`;
-                        } else if (m.status === 'loading tesseract core') {
-                            statusDiv.innerText = "🚀 啟動引擎中...";
-                        }
-                    }
-                }
-            ).then(({ data: { text } }) => {
-                console.log("OCR Raw Text:", text);
-                statusDiv.innerText = "✅ 辨識完成！";
-                statusDiv.style.color = "green";
-
-                // --- 解析邏輯 (同前版，但因影像清晰，準確度會提高) ---
-                
-                // 1. 抓取金額
-                let extractedAmount = 0;
-                // 移除逗號與空格，將全形數字轉半形
-                const cleanText = text.replace(/,/g, '').replace(/ /g, '')
-                                      .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-
-                // 針對日本發票常見關鍵字優化 Regex
-                // 優先尋找「合計」、「小計」、「Total」、「¥」後面的數字
-                const totalRegex = /(?:合計|小計|Total|Payment|¥|￥|Amount)(?:[^0-9]*)([0-9]+)/i;
-                const totalMatch = cleanText.match(totalRegex);
-                
-                if (totalMatch && totalMatch[1]) {
-                    extractedAmount = parseInt(totalMatch[1]);
-                } else {
-                    // 備案：找最大的數字 (排除電話號碼長度，通常金額在 3~6 位數)
-                    const allNumbers = cleanText.match(/\d+/g);
-                    if (allNumbers) {
-                        // 過濾掉太長(電話)或太短的數字
-                        const numbers = allNumbers.map(n => parseInt(n)).filter(n => n > 10 && n < 2000000); 
-                        if(numbers.length > 0) {
-                            extractedAmount = Math.max(...numbers);
-                        }
-                    }
-                }
-
-                if (extractedAmount > 0) {
-                    amountInp.value = extractedAmount;
-                    amountInp.style.backgroundColor = "#e8f5e9"; // 綠色閃爍提示
-                    setTimeout(()=> amountInp.style.backgroundColor = "white", 800);
-                } else {
-                    statusDiv.innerText = "⚠️ 數值模糊，請手動輸入";
-                }
-
-                // 2. 抓取店家名稱 (取最上方字體最大或第一行清晰的文字)
-                // 這裡簡單取第一行非符號文字
-                const lines = text.split('\n').filter(l => l.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '').length > 2);
-                if (lines.length > 0 && !itemInp.value) {
-                    // 去除一些常見的雜訊字元
-                    let potentialName = lines[0].replace(/[:._-]/g, '').trim();
-                    itemInp.value = potentialName.substring(0, 15);
-                }
-
-                // 3. 自動切換幣別
-                if (text.includes('¥') || text.includes('￥') || text.includes('円')) {
-                    setCurrency('JPY');
-                } else if (text.includes('NT') || text.includes('TW')) {
-                    setCurrency('TWD');
-                }
-
-            }).catch(err => {
-                console.error(err);
-                statusDiv.innerText = "❌ 辨識失敗，請重拍";
-                statusDiv.style.color = "var(--accent)";
-            });
-        });
-    }
 </script>
 </body>
 </html>
